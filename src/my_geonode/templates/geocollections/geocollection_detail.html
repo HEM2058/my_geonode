@@ -1,0 +1,16 @@
+{% extends "page.html" %}
+{% block container %}
+<div class="geocollection-custom-page-container">
+    <p class="h2">Geocollection {{ object.name }}</p>
+    <p>Group: {{ object.group.title }}</p>
+    <p>Resources:</p>
+    <ul class="list-group">
+        {% for resource in object.resources.all %}
+            <li class="list-group-item bordertopbottom">
+              <div><a href="{{resource.detail_url}}" target="_blank">{{resource.title}}</a><div>
+              <div>{{resource.abstract|safe}}</div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
