@@ -1,16 +1,1841 @@
-{% extends "page.html" %}
-{% block container %}
-<div class="geocollection-custom-page-container">
-    <p class="h2">Geocollection {{ object.name }}</p>
-    <p>Group: {{ object.group.title }}</p>
-    <p>Resources:</p>
-    <ul class="list-group">
-        {% for resource in object.resources.all %}
-            <li class="list-group-item bordertopbottom">
-              <div><a href="{{resource.detail_url}}" target="_blank">{{resource.title}}</a><div>
-              <div>{{resource.abstract|safe}}</div>
-            </li>
-        {% endfor %}
-    </ul>
+{% comment %} {% extends "page.html" %} {% endcomment %}
+
+{% load static %}
+
+
+{% comment %} {% block container %} {% endcomment %}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Dashboard</title>
+  
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.1.0/leaflet.awesome-markers.css" integrity="sha512-B/W/a6qfU6dAgw7VvUoLZkn7V+tR6cBv9PktW8GivfRd94kwxdTD5RRHua5lu5l29l5e3qkZvBR9XKo8ScttEw==" crossorigin="anonymous" />
+ 
+
+
+    <link rel="stylesheet" href="{% static '/Geocollections/L.Control.Basemaps.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
+ 
+     <link rel="stylesheet" href="{% static '/Geocollections/leaflet-custom marker/leaflet.awesome-markers.css' %}">
+      
+    <!-- Custom CSS -->
+    <style>
+
+        
+        /* Set full height */
+        {% comment %} html, body  {
+            height: 100%;
+           
+        }
+
+
+       
+        
+        #map{
+            width: 100%;
+            height: 100vh;
+
+
+        }
+        /* Set padding for map container */
+        #map-container {
+            padding: 0;
+        }
+        /* Style for menu button */
+        .menu-btn {
+            position: absolute;
+            top: 150px;
+            left: 0;
+            z-index: 999;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: none;
+            outline: none;
+        }
+        /* Style for menu bar */
+        .menu-bar {
+    position: fixed;
+    top: 190px;
+    left: -250px;
+    z-index: 998;
+    width: 200px;
+    height: 610px; /* Increased height to fit User Mode buttons */
+    border-radius:  2px 30px 4px 20px;
+    background-color: #f8f8f8;
+    transition: all 0.3s ease;
+}
+/* Style for menu bar - show */
+.menu-bar.show {
+    left: 10px;
+    top:190px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+}
+/* Style for menu items */
+.menu-item {
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #343a40;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s ease;
+}
+/* Style for menu items - hover */
+.menu-item:hover {
+    background-color: #e9ecef;
+}
+/* Style for active menu item */
+.menu-item.active {
+    background-color:transparent;
+    color: #4016d7;
+}
+
+/* Style for User Mode buttons */
+.user-mode {
+    margin-top: 20px;
+    text-align: center;
+}
+.user-mode p {
+    font-size: 16px;
+    font-weight: bold;
+}
+.user-mode button {
+    margin: 10px;
+    padding: 8px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #4016d7;
+    color: #fff;
+    cursor: pointer;
+}
+.user-mode button:hover {
+    background-color: #1a0c51;
+}
+.user-mode button:focus {
+    outline: none;
+}
+
+        /* Style for filter button */
+        .filter-btn {
+            background-color: black;
+            border: none;
+            outline: none;
+        }
+        /* Style for post plan button */
+        .post-plan-btn {
+            background-color:transparent;
+            border: none;
+            outline: none;
+        }
+        /* Style for history button */
+        .history-btn {
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
+        /* Style for payment button */
+      
+        /* Style for setting button */
+        .setting-btn {
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
+        /* Style for menu button icon */
+        .menu-btn i {
+            font-size: 24px;
+            color: #343a40;
+            margin-top: 200px;
+        }
+
+      .menu-bar a{
+        text-decoration: none;
+     }
+     #search-bar {
+  position: absolute;
+  top: 140px;
+  right: 45px;
+  z-index: 999;
+}
+
+/* Style for search bar input */
+#search-input {
+  width: 250px;
+  height: 50px;
+  padding: 10px 10px 10px 50px;
+  font-size: 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: #f8f9fa;
+  /* background-image: url('https://cdn-icons-png.flaticon.com/512/709/709690.png'); */
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+}
+
+/* Style for direction icon */
+#direction-icon {
+  position: absolute;
+  top: 12px;
+  left: 11px;
+  font-size: 30px;
+  color: #343a40;
+  cursor: pointer;
+  z-index: 1000;
+  
+}
+
+
+
+/* Style for search icon */
+#search-icon {
+  position: absolute;
+  top: 18px;
+  left: 210px;
+  font-size: 20px;
+  color: #343a40;
+  cursor: pointer;
+  z-index: 1000;
+}
+#direction-popup {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 360px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  padding: 20px;
+  z-index: 1000;
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  #direction-popup {
+    width: 90%;
+    max-width: 500px;
+    right: 5%;
+    left: 5%;
+    top: 12%;
+  }
+  #search-bar {
+  position: absolute;
+  top: 200px;
+  right: 45px;
+  z-index: 999;
+}
+.menu-btn {
+            position: absolute;
+            top: 190px;
+            left: 0;
+            z-index: 999;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: none;
+            outline: none;
+        }
+          /* Style for menu bar */
+          .menu-bar {
+    position: fixed;
+    top: 245px;
+    left: -250px;
+    z-index: 998;
+    width: 200px;
+    height: 610px; /* Increased height to fit User Mode buttons */
+    border-radius:  2px 30px 4px 20px;
+    background-color: #f8f8f8;
+    transition: all 0.3s ease;
+}
+/* Style for menu bar - show */
+.menu-bar.show {
+    left: 10px;
+    top:245px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+}
+}
+
+#direction-popup.show {
+  display: block;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.popup-header i {
+  font-size: 400px;
+  cursor: pointer;
+  color: #343a40;
+ 
+}
+.popup-header  .fa-car{
+ 
+  font-size:25px;
+box-shadow: #4016d7;
+
+}
+
+.popup-header  .fa-bicycle{
+
+  font-size:25px;
+
+}
+
+.popup-header  .fa-walking{
+
+
+  font-size:25px;;
+}
+
+
+.popup-header i.fa-times {
+  font-size: 18px;
+}
+
+.popup-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.from-to-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.from-to-row i {
+  font-size: 24px;
+  color: #343a40;
+  margin-right: 10px;
+}
+
+.from-to-row input[type="text"] {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  padding: 10px;
+  font-size: 15px;
+  outline: none;
+}
+
+.popup-body button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 55px;
+  padding: 15px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+
+/* search result popup */
+#search-popup {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 320px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  z-index: 1000;
+  display: none;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+#search-popup.show {
+  display: block;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.popup-header i {
+  font-size: 18px;
+  cursor: pointer;
+  color: #343a40;
+}
+
+.popup-header i.fa-times {
+  font-size: 18px;
+}
+
+.popup-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-body .search-result {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.popup-body .search-result:hover {
+  background-color: #f5f5f5;
+}
+
+.popup-body .search-result i {
+  font-size: 16px;
+  color: #343a40;
+  margin-right: 10px;
+
+}
+
+.popup-body .search-result .search-result-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.popup-body .search-result .search-result-address {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+}
+#search-results .result-item {
+  cursor: pointer;
+  
+}
+
+#search-results .result-item:hover {
+  background-color: #eee;
+}
+
+#search-results .result-item.selected {
+  border: 2px solid #0077ff;
+}
+
+#search-results .result-item.selected:hover {
+  background-color: #fff;
+}
+
+.preloader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.location-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  margin-top: -25px;
+  margin-left: -25px;
+  background-image: url('https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-512.png');
+  background-size: 100% 100%;
+  z-index: 1;
+}
+
+.preloader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  margin-top: -30px;
+  margin-left: -30px;
+  border-radius: 50%;
+  border-top: 5px solid #3498db;
+  border-right: 5px solid transparent;
+  animation: spin 1s linear infinite;
+  z-index: 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/* Style for active user mode item */
+.user-mode-btn.active::before {
+  content: "\2713";
+  color: #2196F3;
+  font-size: 30px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+/* location cross hair icon */
+.crosshair-icon {
+    position: absolute;
+    bottom: 20%;
+    right: 0;
+    transform: translateX(-50%);
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 30%;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.crosshair-icon .fa-crosshairs {
+    color: #3366ff;
+    font-size: 30px;
+    
+}
+
+.crosshair-icon:hover {
+    background-color: #ecf3f8;
+    cursor: pointer;
+}
+
+.crosshair-icon:hover .fa-crosshairs {
+    color: #29cb08;
+}
+
+/* publish plan button */
+
+/* Style for the popup form */
+/* Style for the pop-up form */
+#publish-plan-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+#publish-plan-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#publish-plan-form input[type="text"],
+#publish-plan-form input[type="datetime-local"],
+#publish-plan-form input[type="number"],
+#publish-plan-form select {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+#publish-plan-form button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#publish-plan-form button.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #555;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+#publish-plan-form button.close:hover {
+  color: #007bff;
+}
+
+/* Style for the overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  display: none;
+}
+
+/* Style for the background elements */
+body {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Media query for small screens */
+@media only screen and (max-width: 767px) {
+  #publish-plan-form {
+    max-width: 90%;
+  }
+}
+
+/* Style to make the pop-up float over the background elements */
+body.modal-open {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.leaflet-routing-container{
+  background-color: rgb(237, 250, 250);
+  border: 3px solid black;
+  top: 180px;
+
+  border-radius: 5px;
+}
+@media only screen and (max-width: 640px){
+.leaflet-routing-container {
+    margin: 30px !important;
+    padding: 0 !important;
+    width: 60%;
+    height: 20%;
+}
+.leaflet-routing-alt, .leaflet-routing-geocoders, .leaflet-routing-error {
+    padding: 2px;
+    margin-top: 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #ccc;
+    max-height: 222px;
+    overflow-y: auto;
+    transition: all 0.2s ease;
+}
+} {% endcomment %}
+
+
+/* Set full height */
+html, body  {
+    height: 100%;
+   
+}
+
+
+
+
+#map{
+    width: 100%;
+    height: 100vh;
+
+
+}
+/* Set padding for map container */
+#map-container {
+    padding: 0;
+}
+.home-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border: none;
+  outline: none;
+}
+/* Style for menu button */
+.menu-btn {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    z-index: 999;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: none;
+    outline: none;
+}
+/* Style for menu bar */
+.menu-bar {
+position: fixed;
+top: 100px;
+left: -250px;
+z-index: 998;
+width: 200px;
+height: 610px; /* Increased height to fit User Mode buttons */
+border-radius:  2px 30px 4px 20px;
+background-color: #f8f8f8;
+transition: all 0.3s ease;
+}
+/* Style for menu bar - show */
+.menu-bar.show {
+left: 0;
+top:100px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+}
+/* Style for menu items */
+.menu-item {
+padding: 10px 20px;
+font-size: 18px;
+color: #343a40;
+text-decoration: none;
+display: block;
+transition: all 0.3s ease;
+}
+/* Style for menu items - hover */
+.menu-item:hover {
+background-color: #e9ecef;
+}
+/* Style for active menu item */
+.menu-item.active {
+background-color:transparent;
+color: #4016d7;
+}
+
+/* Style for User Mode buttons */
+.user-mode {
+margin-top: 20px;
+text-align: center;
+}
+.user-mode p {
+font-size: 16px;
+font-weight: bold;
+}
+.user-mode button {
+margin: 10px;
+padding: 8px 20px;
+font-size: 16px;
+border: none;
+border-radius: 20px;
+background-color: #4016d7;
+color: #fff;
+cursor: pointer;
+}
+.user-mode button:hover {
+background-color: #1a0c51;
+}
+.user-mode button:focus {
+outline: none;
+}
+
+/* Style for filter button */
+.filter-btn {
+    background-color: black;
+    border: none;
+    outline: none;
+}
+/* Style for post plan button */
+.post-plan-btn {
+    background-color:transparent;
+    border: none;
+    outline: none;
+}
+/* Style for history button */
+.history-btn {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+/* Style for payment button */
+
+/* Style for setting button */
+.setting-btn {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+/* Style for menu button icon */
+.menu-btn i {
+    font-size: 24px;
+    color: #343a40;
+}
+
+.menu-bar a{
+text-decoration: none;
+}
+#search-bar {
+position: absolute;
+top: 15px;
+right: 45px;
+z-index: 999;
+}
+
+/* Style for search bar input */
+#search-input {
+width: 250px;
+height: 50px;
+padding: 10px 10px 10px 50px;
+font-size: 16px;
+border-radius: 25px;
+border: none;
+background-color: #f8f9fa;
+/* background-image: url('https://cdn-icons-png.flaticon.com/512/709/709690.png'); */
+background-size: 20px;
+background-repeat: no-repeat;
+background-position: 15px center;
+}
+
+/* Style for direction icon */
+#direction-icon {
+position: absolute;
+top: 12px;
+left: 11px;
+font-size: 30px;
+color: #343a40;
+cursor: pointer;
+z-index: 1000;
+
+}
+
+
+
+/* Style for search icon */
+#search-icon {
+position: absolute;
+top: 18px;
+left: 210px;
+font-size: 20px;
+color: #343a40;
+cursor: pointer;
+z-index: 1000;
+}
+#direction-popup {
+position: absolute;
+top: 70px;
+right: 20px;
+width: 360px;
+background-color: #fff;
+border-radius: 10px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+padding: 20px;
+z-index: 1000;
+display: none;
+}
+
+@media only screen and (max-width: 768px) {
+#direction-popup {
+width: 90%;
+max-width: 500px;
+right: 5%;
+left: 5%;
+top: 12%;
+}
+}
+
+#direction-popup.show {
+display: block;
+}
+
+.popup-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.popup-header i {
+font-size: 400px;
+cursor: pointer;
+color: #343a40;
+
+}
+.popup-header  .fa-car{
+
+font-size:25px;
+box-shadow: #4016d7;
+
+}
+
+.popup-header  .fa-bicycle{
+
+font-size:25px;
+
+}
+
+.popup-header  .fa-walking{
+
+
+font-size:25px;;
+}
+
+
+.popup-header i.fa-times {
+font-size: 18px;
+}
+
+.popup-body {
+display: flex;
+flex-direction: column;
+}
+
+.from-to-row {
+display: flex;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.from-to-row i {
+font-size: 24px;
+color: #343a40;
+margin-right: 10px;
+}
+
+.from-to-row input[type="text"] {
+width: 100%;
+border: none;
+border-bottom: 2px solid #ccc;
+padding: 10px;
+font-size: 15px;
+outline: none;
+}
+
+.popup-body button {
+background-color: #007bff;
+color: #fff;
+border: none;
+border-radius: 55px;
+padding: 15px;
+font-size: 15px;
+cursor: pointer;
+}
+
+
+/* search result popup */
+#search-popup {
+position: absolute;
+top: 70px;
+right: 20px;
+width: 320px;
+background-color: #fff;
+border-radius: 10px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+padding: 10px;
+z-index: 1000;
+display: none;
+overflow-y: auto;
+max-height: 400px;
+}
+
+#search-popup.show {
+display: block;
+}
+
+.popup-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
+
+.popup-header i {
+font-size: 18px;
+cursor: pointer;
+color: #343a40;
+}
+
+.popup-header i.fa-times {
+font-size: 18px;
+}
+
+.popup-body {
+display: flex;
+flex-direction: column;
+}
+
+.popup-body .search-result {
+display: flex;
+align-items: center;
+margin-bottom: 10px;
+cursor: pointer;
+padding: 10px 0;
+border-bottom: 1px solid #ccc;
+}
+
+.popup-body .search-result:hover {
+background-color: #f5f5f5;
+}
+
+.popup-body .search-result i {
+font-size: 16px;
+color: #343a40;
+margin-right: 10px;
+
+}
+
+.popup-body .search-result .search-result-name {
+font-size: 16px;
+font-weight: bold;
+margin-bottom: 5px;
+}
+
+.popup-body .search-result .search-result-address {
+font-size: 14px;
+color: #555;
+margin-bottom: 5px;
+}
+#search-results .result-item {
+cursor: pointer;
+
+}
+
+#search-results .result-item:hover {
+background-color: #eee;
+}
+
+#search-results .result-item.selected {
+border: 2px solid #0077ff;
+}
+
+#search-results .result-item.selected:hover {
+background-color: #fff;
+}
+
+.preloader-container {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+background: rgba(0, 0, 0, 0.5);
+z-index: 9999;
+}
+
+.location-icon {
+position: absolute;
+top: 50%;
+left: 50%;
+width: 50px;
+height: 50px;
+margin-top: -25px;
+margin-left: -25px;
+background-image: url('https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-512.png');
+background-size: 100% 100%;
+z-index: 1;
+}
+
+.preloader {
+position: absolute;
+top: 50%;
+left: 50%;
+width: 60px;
+height: 60px;
+margin-top: -30px;
+margin-left: -30px;
+border-radius: 50%;
+border-top: 5px solid #3498db;
+border-right: 5px solid transparent;
+animation: spin 1s linear infinite;
+z-index: 0;
+}
+
+@keyframes spin {
+0% {
+transform: rotate(0deg);
+}
+100% {
+transform: rotate(360deg);
+}
+}
+/* Style for active user mode item */
+.user-mode-btn.active::before {
+content: "\2713";
+color: #2196F3;
+font-size: 30px;
+font-weight: bold;
+margin-right: 5px;
+}
+
+/* location cross hair icon */
+.crosshair-icon {
+position: absolute;
+bottom: 20%;
+right: 0;
+transform: translateX(-50%);
+background-color: #ffffff;
+padding: 10px;
+border-radius: 30%;
+box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+z-index: 1000;
+}
+
+.crosshair-icon .fa-crosshairs {
+color: #3366ff;
+font-size: 30px;
+
+}
+
+.crosshair-icon:hover {
+background-color: #ecf3f8;
+cursor: pointer;
+}
+
+.crosshair-icon:hover .fa-crosshairs {
+color: #29cb08;
+}
+
+/* publish plan button */
+
+/* Style for the popup form */
+/* Style for the pop-up form */
+#publish-plan-form {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 90%;
+max-width: 600px;
+padding: 20px;
+background-color: #fff;
+border-radius: 10px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+z-index: 999;
+}
+
+#publish-plan-form label {
+display: block;
+margin-bottom: 5px;
+font-weight: bold;
+}
+
+#publish-plan-form input[type="text"],
+#publish-plan-form input[type="datetime-local"],
+#publish-plan-form input[type="number"],
+#publish-plan-form select {
+display: block;
+width: 100%;
+padding: 10px;
+margin-bottom: 15px;
+border: 1px solid #ccc;
+border-radius: 5px;
+font-size: 16px;
+box-sizing: border-box;
+}
+
+#publish-plan-form button[type="submit"] {
+display: block;
+width: 100%;
+padding: 10px;
+background-color: #007bff;
+color: #fff;
+border: none;
+border-radius: 5px;
+font-size: 16px;
+cursor: pointer;
+}
+
+#publish-plan-form button.close {
+position: absolute;
+top: 10px;
+right: 10px;
+padding: 5px;
+font-size: 20px;
+font-weight: bold;
+color: #555;
+border: none;
+background-color: transparent;
+cursor: pointer;
+}
+
+#publish-plan-form button.close:hover {
+color: #007bff;
+}
+
+/* Style for the overlay */
+.overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+z-index: 998;
+display: none;
+}
+
+/* Style for the background elements */
+body {
+position: relative;
+overflow: hidden;
+}
+
+/* Media query for small screens */
+@media only screen and (max-width: 767px) {
+#publish-plan-form {
+max-width: 90%;
+}
+}
+
+/* Style to make the pop-up float over the background elements */
+body.modal-open {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+overflow: hidden;
+}
+
+body.modal-open #publish-plan-form {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 9999;
+}
+
+    </style>
+</head>
+
+<body id="body">
+  
+<div id="DisplayControl">
+ <!-- Menu button -->
+ <button class="home-btn" id="home-btn"><a style="text-decoration: none;" href="/"><i class="fas fa-home"></i></a></button>
+
+ <button class="menu-btn" id="menu-btn"><i class="fas fa-filter"></i></button>
+ <!-- Map container -->
+ <!-- Preloader -->
+ <!-- HTML code -->
+ <div class="preloader-container">
+<div class="location-icon"></div>
+<div class="preloader"></div>
 </div>
-{% endblock %}
+
+ <div id="map-container">
+     <div id="map"></div>
+     <div class="crosshair-icon">
+       <i class="fas fa-crosshairs"></i>
+   </div>
+ </div>
+<!-- Location crosshair icon -->
+
+
+ <!-- Menu bar -->
+ <div class="menu-bar" id="menu-bar">
+  <!-- Menu items -->
+  <label class="menu-item active">
+     <input type="checkbox" name="all" value="all">
+     <i class="fas fa-check-square"></i>
+     <span>All</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="school" value="school">
+     <i class="fas fa-school"></i>
+     <span>School</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="college" value="college">
+     <i class="fas fa-graduation-cap"></i>
+     <span>College</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="atm" value="atm">
+     <i class="fas fa-money-bill-alt"></i>
+     <span>ATM</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="bank" value="bank">
+     <i class="fas fa-university"></i>
+     <span>Bank</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="hotel" value="hotel">
+     <i class="fas fa-hotel"></i>
+     <span>Hotel</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="toilet" value="toilet">
+     <i class="fas fa-restroom"></i>
+     <span>Toilet</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="restaurant" value="restaurant">
+     <i class="fas fa-utensils"></i>
+     <span>Restaurant</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="park" value="park">
+     <i class="fas fa-tree"></i>
+     <span>Park</span>
+  </label>
+  <label class="menu-item">
+     <input type="checkbox" name="gas-station" value="gas-station">
+     <i class="fas fa-gas-pump"></i>
+     <span>Gas Station</span>
+  </label>
+</div>
+
+ 
+
+ 
+   
+  
+  
+   <!-- Search bar -->
+<div id="search-bar">
+  <i id="direction-icon" class="fas fa-directions"></i>
+  <input type="text" id="search-input" class="query-input" placeholder="Search place">
+  <i id="search-icon" class="fas fa-search"></i>
+  <div id="line-separator"></div>
+ </div>
+ <!-- Direction popup -->
+ <div id="direction-popup">
+  <div class="popup-header">
+    <i class="fas fa-car"></i>
+    <i class="fas fa-bicycle"></i>
+    <i class="fas fa-walking"></i>
+    <i class="fas fa-times"></i>
+  </div>
+  <div class="popup-body">
+    <div class="from-to-row">
+     
+      <input type="text" id="yourlocation" class="query-input1" placeholder="Your location">
+      <i id="yourlocation-icon" class="fas fa-search"></i>
+    </div>
+    <div class="from-to-row">
+     
+      <input id="yourdestination" class="query-input2" type="text" placeholder="Choose destination">
+      <i id="yourdestination-icon" class="fas fa-search"></i>
+    </div>
+    <button id="get-directions-btn">Get Directions</button>
+  </div>
+ </div>
+ 
+ 
+
+ 
+ <!-- publish plan popup -->
+ </div>
+</div>
+
+ 
+ <!-- Search result popup -->
+ <!-- Search popup -->
+ <div id="search-popup">
+  <div class="popup-header">
+   <h3>Search Results</h3>
+   <i class="fas fa-times"></i>
+  </div>
+  <div class="popup-body">
+   <div id="search-results" class="search-results-container"></div>
+  </div>
+  <div class="popup-footer">
+   <div class="search-results-footer">
+     <span id="search-results-count"></span>
+     <div class="search-results-slider">
+       <div class="slider-track">
+         <div class="slider-thumb"></div>
+       </div>
+     </div>
+   </div>
+  </div>
+  </div>
+   
+
+
+
+
+
+
+  
+  
+</div>
+
+
+
+    <!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+<!-- Font Awesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<script src="{% static '/Geocollections/L.Control.Basemaps.js' %}"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{% static '/Geocollections/leaflet-custom marker/leaflet.awesome-markers.min.js' %}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+<!-- Leaflet.locatecontrol JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.71.0/dist/L.Control.Locate.min.js"></script>
+<!-- Custom JS -->
+<script>
+  const preloader = document.querySelector(".preloader-container");
+ 
+    $(document).ready(function() {
+
+
+
+
+        // Initialize map
+        
+       var map = L.map('map', {
+    // maxZoom: 20,
+    // minZoom: 6,
+    zoomControl: false
+});
+
+// map.setView([28.2096, 83.9856], 7);
+var defaultView = [20.5937, 78.9629]; 
+var lc = L.control.locate({
+  setView: 'untilPan',  // setView option set to 'once'
+  locateOptions: {
+    maximumAge: 10000,
+    timeout: 10000,
+    enableHighAccuracy: false
+  },
+  onLocationError: function(err) {
+    alert(err.message);
+    map.setView(defaultView, 4);
+  },
+  onLocationFound: function(e) {
+    // Use the user's location to set the center and zoom level of the map
+    map.setView(e.latlng,5);
+  }
+}).addTo(map);
+lc.getContainer().style.display = 'none';
+// Manually start the plugin to check for the user's location
+lc.start();
+
+var customZoomControl = L.control.zoom({
+  position: 'bottomleft',
+  zoomInText: '+', // Customize the zoom in text
+  zoomOutText: '-', // Customize the zoom out text
+  zoomInTitle: 'Zoom In', // Customize the zoom in tooltip
+  zoomOutTitle: 'Zoom Out' // Customize the zoom out tooltip
+}).addTo(map);
+zoomControl = customZoomControl
+// Adjust the size and position of the zoom control using CSS
+var zoomControlContainer = customZoomControl.getContainer();
+zoomControlContainer.style.width = '20px'; // Set the width of the container
+zoomControlContainer.style.height = '20px'; // Set the height of the container
+zoomControlContainer.style.marginBottom = '130px'; // Adjust the bottom margin as needed
+zoomControlContainer.style.marginLeft = '10px'; // Adjust the left margin as needed
+zoomControlContainer.style.borderRadius = '50%'; // Apply border radius to create a circular button
+ 
+scaleControl = L.control.scale({metric: true}).addTo(map);   
+        
+
+
+var basemaps = [
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: "abcd",
+                    maxZoom: 20,
+                    minZoom: 0,
+                    label: "OSM layer"
+                   
+}
+),
+googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
+  
+                    maxZoom: 20,
+                    minZoom: 0,
+                    label: "Google satellite"
+}),
+googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
+                    maxZoom: 20,
+                    minZoom: 0,
+                    label: "Google Hybrid"
+}),
+googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
+    
+                    maxZoom: 20,
+                    minZoom: 0,
+                    label: "Google street"
+}),
+CyclOSM = L.tileLayer(
+  "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
+  {
+    attribution: "CyclOSM | Map data: © OpenStreetMap contributors",
+    subdomains: "abcd",
+                    maxZoom: 20,
+                    minZoom: 0,
+                    label: "CyclOSM"
+  })
+          
+            
+          
+            ];
+
+            map.addControl(
+                L.control.basemaps({
+                    basemaps: basemaps,
+                    tileX: 0,
+                    tileY: 0,
+                    tileZ: 1
+                })
+            );
+
+  
+
+
+preloader.style.display = "none";
+
+// #Navigate to your location
+const location = document.querySelector('.crosshair-icon')
+location.addEventListener("click", function(){
+  preloader.style.display = "block";
+  navigator.geolocation.getCurrentPosition(function(position) {
+    L.circle([position.coords.latitude, position.coords.longitude], {
+  color: '#00008B',
+  fillColor: '#00008B',
+  fillOpacity: 0.5,
+  radius: 100,
+  weight: 20,
+  opacity: 0.3,
+  gradient: true
+}).addTo(map);
+
+var icon = L.AwesomeMarkers.icon({
+  icon: 'fa-chalkboard-teacher',
+  markerColor: 'red',
+  prefix: 'fa',
+  
+
+});
+
+L.marker([position.coords.latitude, position.coords.longitude], {
+  icon: icon
+}).addTo(map);
+   
+    map.flyTo([position.coords.latitude, position.coords.longitude], 15, {
+    duration: 2,  // duration of the animation in seconds
+    easeLinearity: 0.25  // easing factor for the animation
+
+    
+  });
+
+preloader.style.display = "none";
+     
+    });
+});
+ // get references to the input fields and button
+
+ const directionPopup1 = document.querySelector('#direction-popup');
+ const yourLocationInput1 = document.getElementById("yourlocation");
+  const yourDestinationInput1 = document.getElementById("yourdestination");
+  const getDirectionsButton = document.getElementById("get-directions-btn");
+  
+  // add event listener to button
+  getDirectionsButton.addEventListener("click", function() {
+    
+
+    const yourLocation = yourLocationInput1.value;
+    const yourDestination = yourDestinationInput1.value;
+      // Check if yourDestination is empty
+  if (!yourDestination) {
+    // alert("Please enter the destination");
+    // return;
+    swal({
+  title: "Please enter the destination",
+  icon: "warning",
+  confirmButtonColor: "#3085d6",
+  confirmButtonText: "OK",
+ });
+return;
+
+  }
+   // Show preloader
+   preloader.style.display = "block";
+     // Check if yourLocation is empty
+  if (!yourLocation) {
+    // If yourLocation is empty, get current location
+      navigator.geolocation.getCurrentPosition(function(position) {
+      // Call yourFunction with current location and destination
+      yourFunction(
+        position.coords.latitude + ',' + position.coords.longitude,
+        yourDestination
+      );
+      var icon = L.AwesomeMarkers.icon({
+  icon: 'fas fa-user',
+  markerColor: 'red',
+  iconColour:'white',
+  prefix: 'fa'
+  
+
+  
+
+});
+L.marker([position.coords.latitude, position.coords.longitude], {
+  icon: icon
+}).addTo(map);
+    });
+  } else {
+    // If yourLocation is not empty, call yourFunction with yourLocation and yourDestination
+    yourFunction(yourLocation, yourDestination);
+  }
+  });
+
+
+  function yourFunction(start, end) {
+    
+  var latitude = start.split(",")
+  var la1= parseFloat(latitude[0])
+  var la2= parseFloat(latitude[1])
+
+   var longitude = end.split(",")
+   var lo1 = parseFloat(longitude[0])
+   var lo2 = parseFloat(longitude[1])
+    console.log(la1,la2)
+    console.log(lo1,lo2)
+  L.Routing.control({
+    waypoints: [
+
+
+      L.latLng(la1,la2),
+      L.latLng(lo1,lo2)
+      
+   
+    ]
+    
+
+    }).addTo(map);
+    
+      
+    map.flyTo([la1, la2], 8, {
+    duration: 2,  // duration of the animation in seconds
+    easeLinearity: 0.25  // easing factor for the animation
+
+    
+  });
+
+    directionPopup1.style.display = 'none';
+      // Hide preloader
+  preloader.style.display = "none";
+  }
+
+
+
+
+    // direction popup
+    const directionIcon = document.querySelector('#direction-icon');
+const directionPopup = document.querySelector('#direction-popup');
+const closeDirectionPopup = directionPopup.querySelector('.fa-times');
+
+directionIcon.addEventListener('click', () => {
+  directionPopup.style.display = 'block';
+});
+
+closeDirectionPopup.addEventListener('click', () => {
+  directionPopup.style.display = 'none';
+});
+
+// search result popup
+const searchPopup = document.querySelector('#search-popup');
+const searchInput = document.querySelector('#search-input');
+const searchIcon = document.querySelector('#search-icon');
+const yourLocationInput = document.querySelector('#yourlocation');
+const yourLocationIcon = document.querySelector('#yourlocation-icon');
+const yourDestinationInput = document.querySelector('#yourdestination');
+const yourDestinationIcon = document.querySelector('#yourdestination-icon');
+const searchResults = document.querySelector('#search-results');
+const Destination = document.querySelector('#destination');
+const queryInput = document.querySelector('.query-input');
+const queryInput1 = document.querySelector('.query-input1');
+const queryInput2 = document.querySelector('.query-input2');
+
+
+// Destination.addEventListener('keyup', (event) => {
+//   if (event.key === 'Enter') {
+//     search(Destination.value);
+//   }
+// });
+// searchInput.addEventListener('keyup', (event) => {
+//   if (event.key === 'Enter') {
+//     search(searchInput.value);
+//   }
+// });
+
+// searchIcon.addEventListener('click', () => {
+//   search(searchInput.value);
+// });
+
+// yourLocationIcon.addEventListener('click', () => {
+//   search(yourLocationInput.value,false);
+// });
+
+// yourLocationInput.addEventListener('keyup', (event) => {
+//   if (event.key === 'Enter') {
+//     search(yourLocationInput.value,false);
+//   }
+// });
+
+// yourDestinationIcon.addEventListener('click', () => {
+//   search(yourDestinationInput.value);
+// });
+
+// yourDestinationInput.addEventListener('keyup', (event) => {
+//   if (event.key === 'Enter') {
+//     search(yourDestinationInput.value);
+//   }
+// });
+
+queryInput.addEventListener('input', () => {
+  search(queryInput.value);
+});
+
+queryInput1.addEventListener('input', () => {
+  search(queryInput1.value,1);
+});
+queryInput2.addEventListener('input', () => {
+  search(queryInput2.value,2);
+});
+
+
+function search(query,boolen) {
+  // const query = searchInput.value;
+  boolen = boolen;
+  if (query) {
+    fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`)
+      .then(response => response.json())
+      .then(data => {
+        searchResults.innerHTML = '';
+        if (data.length > 0) {
+          data.forEach(result => {
+            const resultItem = document.createElement('div');
+            resultItem.classList.add('result-item');
+            resultItem.innerText = result.display_name;
+            resultItem.addEventListener('click', () => {
+              openPlace(result,boolen);
+            });
+            console.log(resultItem)
+            searchResults.appendChild(resultItem);
+          });
+          searchPopup.style.display = 'block';
+        } else {
+          searchResults.innerText = 'No results found.';
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        searchResults.innerText = 'Error fetching search results.';
+      });
+  }
+}
+
+function openPlace(place,boolen) {
+  // get the latitude and longitude of the selected place
+  const lat = parseFloat(place.lat);
+  const lon = parseFloat(place.lon);
+  if(boolen==1)
+  {
+    yourLocationInput.value = `${lat}, ${lon}`;
+  }
+  else if (boolen==2){
+    yourDestinationInput.value = `${lat}, ${lon}`;
+   
+  }
+
+  
+  // zoom to the selected place on the map
+  map.flyTo([lat, lon], 15, {
+    duration: 2,  // duration of the animation in seconds
+    easeLinearity: 0.25  // easing factor for the animation
+  });
+  
+
+ 
+
+  
+  const marker = L.marker([lat, lon]).addTo(map);
+
+  // create a popup at the selected place with the address information
+  const popupContent = `<strong>${place.display_name}</strong>
+  <span>Latitude: ${lat}, Longitude: ${lon}</span>`;
+  marker.bindPopup(popupContent).openPopup();
+
+  // close the search popup
+  searchPopup.style.display = 'none';
+}
+
+
+
+const closeSearchPopup = searchPopup.querySelector('.fa-times');
+closeSearchPopup.addEventListener('click', () => {
+  searchPopup.style.display = 'none';
+});
+
+
+
+
+
+
+
+        // Toggle menu bar
+        $('#menu-btn').click(function() {
+            $('#menu-bar').toggleClass('show');
+        });
+
+// click mune-btn to show/hide scale and zoom control 
+document.getElementById('menu-btn').addEventListener('click', function() {
+  console.log("clicked")
+  if (scaleControl._container.style.display === 'none') {
+    scaleControl._container.style.display = 'block';
+  } else {
+    scaleControl._container.style.display = 'none';
+  }
+});
+
+
+document.getElementById('menu-btn').addEventListener('click', function() {
+  console.log("unclicked")
+  if (zoomControl._container.style.display === 'none') {
+    zoomControl._container.style.display = 'block';
+  } else {
+    zoomControl._container.style.display = 'none';
+  }
+});
+        
+    });
+
+    
+
+
+  </script>
+
+
+{% comment %} {% endblock %} {% endcomment %}

@@ -147,4 +147,4 @@ LANGUAGES = (
     ('ne-ne', 'Nepali'),
 )
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'baf0-103-181-227-148.ngrok-free.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '5a3e-103-181-227-46.ngrok-free.app']
