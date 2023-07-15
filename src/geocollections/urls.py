@@ -1,9 +1,9 @@
 from django.conf.urls import url
-
-from .views import GeocollectionDetail
+from django.urls import path
+from .views import GeoCollections,DatasetsUpload
 
 urlpatterns = [
-    url(r'^(?P<slug>[-\w]+)/$',
-        GeocollectionDetail.as_view(),
-        name='geocollection-detail'),
+   
+     path('Map/', GeoCollections, name='geocollections'),
+     path('Upload_datasets/', DatasetsUpload, name='DatasetsUpload'),
 ]

@@ -148,3 +148,4 @@ LANGUAGES = (
 )
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '5a3e-103-181-227-46.ngrok-free.app']
+DEBUG = True

@@ -1,9 +1,10 @@
 from django.shortcuts import render
+from django.views.generic import TemplateView
+from django.http import request,HttpResponse
 
-# Create your views here.
-from django.views.generic import DetailView
 
-from .models import Geocollection
+def GeoCollections(request):
+    return render(request,'geocollections/geocollection_detail.html')
 
-class GeocollectionDetail(DetailView):
-    model = Geocollection
+def DatasetsUpload(request):
+    return render(request,'geocollections/upload.html')

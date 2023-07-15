@@ -25,7 +25,7 @@ def _is_mobile_device(context):
 def get_base_left_topbar_menu(context):
 
     is_mobile = _is_mobile_device(context)
-
+    user = context.get('request').user
     return [
         {
             "label": "Data",
@@ -63,11 +63,22 @@ def get_base_left_topbar_menu(context):
             "href": "/catalogue/#/search/?f=featured",
             "label": "Featured"
         },
-          {
-            "type": "link",
-            "href": "/geocollections/boulder/",
-            "label": "Resource Map"
-        }
+           {
+            "label": "Resource Map",
+            "type": "dropdown",
+            "items": [
+                {
+                    "type": "link",
+                    "href": "/geocollections/Map/",
+                    "label": "Map"
+                },
+                {
+                "type": "link",
+                 "href": "/geocollections/Upload_datasets/",
+                "label": "Upload datasets"
+            } if user.is_superuser else None,
+            ]
+        },
        
     ]
 
