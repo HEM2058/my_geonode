@@ -7,9 +7,18 @@ import os
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .models import Geocollection
 
 def GeoCollections(request):
-    return render(request,'geocollections/geocollection_detail.html')
+    geocollection_objects = Geocollection.objects.all()
+    geojson_data = []
+    print(geocollection_objects)
+    for geocollection in geocollection_objects:
+        
+        geojson_data.append(geocollection.geojson_data)
+
+    return render(request, 'geocollections/geocollection_detail.html', {'geojson_data': geojson_data,'geocollection_objects':geocollection_objects})
+
 
 def DatasetsUpload(request):
     if request.user.is_superuser:
@@ -19,7 +28,6 @@ def DatasetsUpload(request):
     
 
 
-@csrf_exempt
 @csrf_exempt
 def convert_csv_to_geojson(request):
     if request.method == 'POST' and 'file' in request.FILES:
@@ -36,6 +44,9 @@ def convert_csv_to_geojson(request):
 
         if not longitude_field or not latitude_field or not elevation_field:
             return JsonResponse({'error': 'Invalid field selection. Please select the longitude, latitude, and elevation fields.'})
+
+        # Get the selected category
+        category = request.POST.get('category')
 
         data = []
         for row in csv_data:
@@ -85,15 +96,14 @@ def convert_csv_to_geojson(request):
             },
         }
 
-        geojson_file_path = os.path.join(settings.STATIC_ROOT, 'Geocollections', 'DataSets', 'geojson', 'converted.geojson')
-        os.makedirs(os.path.dirname(geojson_file_path), exist_ok=True)
+        # Create or update a Geocollection object with the category
+        geocollection = Geocollection.objects.create(geojson_data=geojson_data, category=category)
 
-        with open(geojson_file_path, 'w') as f:
-            json.dump(geojson_data, f)
-
-        # Return the file URL in the response
-        file_url = request.build_absolute_uri(settings.STATIC_URL + 'Geocollections/DataSets/geojson/converted.geojson')
-        response_data = {'success': 'File converted and saved successfully.', 'file_url': file_url}
+        # Return the success response
+        response_data = {
+            'success': 'File converted and saved successfully.',
+            'geocollection_id': geocollection.id
+        }
         return JsonResponse(response_data)
 
     return JsonResponse({'error': 'Invalid request.'})

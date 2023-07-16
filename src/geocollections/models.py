@@ -6,14 +6,22 @@ from geonode.groups.models import GroupProfile
 
 
 class Geocollection(models.Model):
-    """
-    A collection is a set of resources linked to a GeoNode group
-    """
-    group = models.ForeignKey(GroupProfile, related_name='group_collections', on_delete=models.CASCADE)
-    resources = models.ManyToManyField(ResourceBase, related_name='resource_collections')
-    name = models.CharField(max_length=128, unique=True)
-    slug = models.SlugField(max_length=128, unique=True)
+    CATEGORY_CHOICES = [
+        ('cooperatives', 'Cooperatives'),
+        ('forest-offices', 'Forest Offices'),
+        ('health-institutions', 'Health Institutions'),
+        ('heat-institutions', 'Heat Institutions'),
+        ('municipal-offices', 'Municipal Offices'),
+        ('religious-places', 'Religious Places'),
+        ('schools', 'Schools'),
+        ('security-offices', 'Security Offices'),
+        ('tourism', 'Tourism'),
+        ('others', 'Others'),
+    ]
 
+    geojson_data = models.JSONField(blank=True, null=True)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES,null=True)
+    
     def __str__(self):
-        return self.name
-
+        return self.category
+    

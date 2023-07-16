@@ -695,7 +695,7 @@ position: fixed;
 top: 100px;
 left: -250px;
 z-index: 998;
-width: 200px;
+width: 238px;
 height: 610px; /* Increased height to fit User Mode buttons */
 border-radius:  2px 30px 4px 20px;
 background-color: #f8f8f8;
@@ -1216,6 +1216,51 @@ left: 50%;
 transform: translate(-50%, -50%);
 z-index: 9999;
 }
+.popup-content {
+    max-width: 300px;
+}
+
+.popup-image img {
+    width: 100%;
+    height: auto;
+}
+
+.popup-icon {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.popup-property {
+    margin-bottom: 5px;
+}
+
+.popup-property-key {
+    font-weight: bold;
+}
+
+.popup-action {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.direction-button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.direction-button i {
+    margin-right: 5px;
+}
+.popup-image-rectangle {
+    width: 100%;
+    height: 100px; /* Adjust the height as needed */
+    background-color: #eaeaea; /* Set the background color for the rectangle */
+    margin-bottom: 10px;
+}
 
     </style>
 </head>
@@ -1247,57 +1292,65 @@ z-index: 9999;
  <!-- Menu bar -->
  <div class="menu-bar" id="menu-bar">
   <!-- Menu items -->
+
   <label class="menu-item active">
-     <input type="checkbox" name="all" value="all">
-     <i class="fas fa-check-square"></i>
-     <span>All</span>
+    <input type="checkbox" id="all-checkbox" name="all" value="all" onchange="toggleGeojsonLayers()">
+    <i class="fas fa-check-square"></i>
+    <span>All</span>
+</label>
+  <label class="menu-item">
+     <input type="checkbox" name="cooperatives" value="cooperatives">
+     <i class="fas fa-building"></i>
+     <span>Cooperatives</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="school" value="school">
-     <i class="fas fa-school"></i>
-     <span>School</span>
+    <input type="checkbox" name="forest-offices" id="forest-offices-checkbox" value="forest-offices">
+    <i class="fas fa-tree"></i>
+    <span>Forest Offices</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="college" value="college">
-     <i class="fas fa-graduation-cap"></i>
-     <span>College</span>
+    <input type="checkbox" name="health-institutions" id="health-institutions-checkbox" value="health-institutions" onchange="toggleHealthInstitutions()">
+    <i class="fas fa-hospital"></i>
+    <span>Health Institutions</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="atm" value="atm">
-     <i class="fas fa-money-bill-alt"></i>
-     <span>ATM</span>
+    <input type="checkbox" name="heat-institutions" id="heat-institutions-checkbox" value="heat-institutions" onchange="toggleHeatInstitutions()">
+    <i class="fas fa-fire"></i>
+    <span>Heat Institutions</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="bank" value="bank">
-     <i class="fas fa-university"></i>
-     <span>Bank</span>
+    <input type="checkbox" name="municipal-offices" id="municipal-offices-checkbox" value="municipal-offices" onchange="toggleMunicipalOffices()">
+    <i class="fas fa-city"></i>
+    <span>Municipal Offices</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="hotel" value="hotel">
-     <i class="fas fa-hotel"></i>
-     <span>Hotel</span>
+    <input type="checkbox" name="religious-places" id="religious-places-checkbox" value="religious-places" onchange="toggleReligiousPlaces()">
+    <i class="fas fa-church"></i>
+    <span>Religious Places</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="toilet" value="toilet">
-     <i class="fas fa-restroom"></i>
-     <span>Toilet</span>
+    <input type="checkbox" name="schools" id="schools-checkbox" value="schools" onchange="toggleSchools()">
+    <i class="fas fa-school"></i>
+    <span>Schools</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="restaurant" value="restaurant">
-     <i class="fas fa-utensils"></i>
-     <span>Restaurant</span>
+    <input type="checkbox" name="security-offices" id="security-offices-checkbox" value="security-offices" onchange="toggleSecurityOffices()">
+    <i class="fas fa-shield-alt"></i>
+    <span>Security Offices</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="park" value="park">
-     <i class="fas fa-tree"></i>
-     <span>Park</span>
+    <input type="checkbox" name="tourism" id="tourism-checkbox" value="tourism" onchange="toggleTourism()">
+    <i class="fas fa-camera"></i>
+    <span>Tourism</span>
   </label>
   <label class="menu-item">
-     <input type="checkbox" name="gas-station" value="gas-station">
-     <i class="fas fa-gas-pump"></i>
-     <span>Gas Station</span>
+    <input type="checkbox" name="others" id="others-checkbox" value="others" onchange="toggleOthers()">
+    <i class="fas fa-question-circle"></i>
+    <span>Others</span>
   </label>
+  
 </div>
+
 
  
 
@@ -1412,27 +1465,27 @@ z-index: 9999;
     zoomControl: false
 });
 
-// map.setView([28.2096, 83.9856], 7);
-var defaultView = [20.5937, 78.9629]; 
-var lc = L.control.locate({
-  setView: 'untilPan',  // setView option set to 'once'
-  locateOptions: {
-    maximumAge: 10000,
-    timeout: 10000,
-    enableHighAccuracy: false
-  },
-  onLocationError: function(err) {
-    alert(err.message);
-    map.setView(defaultView, 4);
-  },
-  onLocationFound: function(e) {
-    // Use the user's location to set the center and zoom level of the map
-    map.setView(e.latlng,5);
-  }
-}).addTo(map);
-lc.getContainer().style.display = 'none';
-// Manually start the plugin to check for the user's location
-lc.start();
+map.setView([28.8372, 80.3213], 11);
+// var defaultView = [20.5937, 78.9629]; 
+// var lc = L.control.locate({
+//   setView: 'untilPan',  // setView option set to 'once'
+//   locateOptions: {
+//     maximumAge: 10000,
+//     timeout: 10000,
+//     enableHighAccuracy: false
+//   },
+//   onLocationError: function(err) {
+//     alert(err.message);
+//     map.setView(defaultView, 4);
+//   },
+//   onLocationFound: function(e) {
+//     // Use the user's location to set the center and zoom level of the map
+//     map.setView(28.8372, 80.3213 ,5);
+//   }
+// }).addTo(map);
+// lc.getContainer().style.display = 'none';
+// // Manually start the plugin to check for the user's location
+// lc.start();
 
 var customZoomControl = L.control.zoom({
   position: 'bottomleft',
@@ -1553,6 +1606,127 @@ preloader.style.display = "none";
      
     });
 });
+// Define the geojsonLayers array
+var geojsonLayers = [];
+
+// Define custom markers for each category
+var markerIcons = {
+  'cooperatives': L.AwesomeMarkers.icon({icon: 'building', markerColor: 'blue', prefix: 'fa'}),
+  'forest-offices': L.AwesomeMarkers.icon({icon: 'tree', markerColor: 'green', prefix: 'fa'}),
+  'health-institutions': L.AwesomeMarkers.icon({icon: 'hospital', markerColor: 'red', prefix: 'fa'}),
+  'heat-institutions': L.AwesomeMarkers.icon({icon: 'fire', markerColor: 'orange', prefix: 'fa'}),
+  'municipal-offices': L.AwesomeMarkers.icon({icon: 'city', markerColor: 'purple', prefix: 'fa'}),
+  'religious-places': L.AwesomeMarkers.icon({icon: 'church', markerColor: 'yellow', prefix: 'fa'}),
+  'schools': L.AwesomeMarkers.icon({icon: 'school', markerColor: 'darkblue', prefix: 'fa'}),
+  'security-offices': L.AwesomeMarkers.icon({icon: 'shield-alt', markerColor: 'darkred', prefix: 'fa'}),
+  'tourism': L.AwesomeMarkers.icon({icon: 'camera', markerColor: 'pink', prefix: 'fa'}),
+  'others': L.AwesomeMarkers.icon({icon: 'question-circle', markerColor: 'gray', prefix: 'fa'})
+};
+
+// Loop through the GeoJSON data and add each layer to the map
+{% for geojson in geocollection_objects %}
+    var geojsonData = {{ geojson.geojson_data|safe }};
+    var category = '{{ geojson.category }}';
+    var geojsonLayer = L.geoJSON(geojsonData, {
+        category: category,
+        pointToLayer: function(feature, latlng) {
+            return L.marker(latlng, { icon: markerIcons[category] });
+        }
+    });
+   
+    // Add the layer to the array
+    geojsonLayers.push(geojsonLayer);
+
+    // Add popup to each feature
+    geojsonLayer.eachLayer(function(layer) {
+    var properties = layer.feature.properties;
+
+    // Generate HTML for popup content
+    var popupContent = '<div class="popup-content">';
+
+    // Add image or icon
+    if (properties.image) {
+        popupContent += '<div class="popup-image">';
+        popupContent += '<div class="popup-image-rectangle"></div>';
+        popupContent += '<img src="' + properties.image + '" width="200" height="150">';
+        popupContent += '</div>';
+    } else if (properties.icon) {
+        popupContent += '<div class="popup-icon"><i class="fas ' + properties.icon + ' fa-3x"></i></div>';
+    } else {
+        // If no image or icon is available, display the default direction icon
+        popupContent += '<div class="popup-image">';
+        popupContent += '<div class="popup-image-rectangle"></div>';
+        popupContent += '<i class="fas fa-location-arrow fa-4x"></i>';
+        popupContent += '</div>';
+    }
+
+    // Add other properties
+    for (var key in properties) {
+        if (properties.hasOwnProperty(key) && key !== 'image' && key !== 'icon') {
+            var value = properties[key];
+            popupContent += '<div class="popup-property">';
+            popupContent += '<span class="popup-property-key">' + key + ':</span>';
+            popupContent += '<span class="popup-property-value">' + value + '</span>';
+            popupContent += '</div>';
+        }
+    }
+
+    // Add "Get Direction" button with icon
+    popupContent += '<div class="popup-action">';
+    popupContent += '<button class="direction-button"><i class="fas fa-location-arrow"></i> Get Direction</button>';
+    popupContent += '</div>';
+
+    popupContent += '</div>';
+
+    layer.bindPopup(popupContent);
+});
+
+
+{% endfor %}
+
+// Function to toggle the visibility of all geojsonLayers
+function toggleGeojsonLayers() {
+    var isChecked = document.getElementById('all-checkbox').checked;
+
+    // Loop through the geojsonLayers array and toggle the visibility
+    geojsonLayers.forEach(function(geojsonLayer) {
+        if (isChecked) {
+            geojsonLayer.addTo(map);
+        } else {
+            geojsonLayer.removeFrom(map);
+        }
+    });
+}
+
+// Function to toggle the visibility of a specific layer by category
+function toggleLayerByCategory(category) {
+    geojsonLayers.forEach(function(geojsonLayer) {
+        if (geojsonLayer.options.category === category) {
+            var isChecked = document.getElementById(category + '-checkbox').checked;
+
+            if (isChecked) {
+                geojsonLayer.addTo(map);
+            } else {
+                geojsonLayer.removeFrom(map);
+            }
+        }
+    });
+}
+
+// Add event listener to the "All" checkbox
+document.getElementById('all-checkbox').addEventListener('change', toggleGeojsonLayers);
+
+// Add event listeners to the checkboxes based on the categories
+{% for geojson in geocollection_objects %}
+    var category = '{{ geojson.category }}';
+    var checkboxId = category + '-checkbox';
+    document.getElementById(checkboxId).addEventListener('change', function() {
+        toggleLayerByCategory('{{ geojson.category }}');
+    });
+{% endfor %}
+
+
+
  // get references to the input fields and button
 
  const directionPopup1 = document.querySelector('#direction-popup');
@@ -1832,7 +2006,7 @@ document.getElementById('menu-btn').addEventListener('click', function() {
         
     });
 
-    
+
 
 
   </script>
