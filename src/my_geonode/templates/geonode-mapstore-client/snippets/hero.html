@@ -1,19 +1,33 @@
 {% load static %}
 <style>
+    @keyframes motionAnimation {
+        0% {
+            background-position: center center;
+        }
+        50% {
+            background-position: center 60%;
+        }
+        100% {
+            background-position: center center;
+        }
+    }
+    
     #gn-hero {
         background-image: url("{% static 'img/hero.jpg' %}");
         background-size: cover;
-        background-position: center center;
         background-repeat: no-repeat;
-        background-color: rgb(156, 156, 156);
+        background-color: rgba(156, 156, 156, 0.9);
         background-blend-mode: multiply;
+        animation: motionAnimation 10s infinite;
     }
+    
+    
 </style>
 <div id="gn-hero" class="gn-hero">
     <div class="jumbotron">
         <div class="gn-hero-description">
-            <h1>Geoport</h1>
-            <p>The Geoportal for pokhara Metropolitan City</p>
+            <h1 >Geoport</h1>
+            <p>The Geoportal for Laljhadi Rural Municipality</p>
         </div>
         <p class="gn-hero-tools">
         </p>

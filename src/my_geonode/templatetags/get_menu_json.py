@@ -72,6 +72,7 @@ def get_base_left_topbar_menu(context):
                     "href": "/geocollections/Map/",
                     "label": "Map"
                 },
+    
                 {
                 "type": "link",
                  "href": "/geocollections/Upload_datasets/",

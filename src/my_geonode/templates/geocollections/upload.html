@@ -1,19 +1,225 @@
 {% extends "page.html" %}
 
 {% block container %}
+    <div class="file-upload-form">
+        <h1>Datasets Upload</h1>
+        <form action="{% url 'convert_csv_to_geojson'%}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="csv">
+                <div class="file-input">
+                    <label for="file">Add CSV file:</label>
+                    <input type="file" name="file" id="file" accept=".csv">
+                </div>
+                <div class="coordinate-input">
+                    <label for="longitude">Longitude (x):</label>
+                    <select name="longitude" id="longitude"></select>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>File Upload</title>
-</head>
-<body>
-    <h1>File Upload</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" id="file">
-        <input type="submit" value="Upload">
-    </form>
-</body>
-</html>
+                    <label for="latitude">Latitude (y):</label>
+                    <select name="latitude" id="latitude"></select>
 
-{% endblock %}
+                    <label for="elevation">Elevation (z):</label>
+                    <select name="elevation" id="elevation"></select>
+                </div>
+            </div>
+            <div class="file-input">
+                <label for="images">Add ZIP file (Images):</label>
+                <input type="file" name="images" id="images" accept=".zip">
+            </div>
+
+            <br><br>
+
+            <div class="category-input">
+                <label for="category">Category:</label>
+                <select name="category" id="category">
+                    <option value="cooperatives">Cooperatives</option>
+                    <option value="forest-offices">Forest Offices</option>
+                    <option value="health-institutions">Health Institutions</option>
+                    <option value="heat-institutions">Heat Institutions</option>
+                    <option value="municipal-offices">Municipal Offices</option>
+                    <option value="religious-places">Religious Places</option>
+                    <option value="schools">Schools</option>
+                    <option value="security-offices">Security Offices</option>
+                    <option value="tourism">Tourism</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+
+            <div id="custom-name-field" style="display: none;">
+                <br>
+                <label for="custom-name">Custom Name:</label>
+                <input type="text" name="custom-name" id="custom-name">
+            </div>
+
+            <br><br>
+
+            <input type="submit" value="Upload">
+        </form>
+
+        <p class="note">If the selected category file is available in the database, the file will be overridden.</p>
+    </div>
+
+    <style>
+        .file-upload-form {
+            text-align: left;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .csv {
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .file-upload-form h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .file-upload-form label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .file-input,
+        .category-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .file-input label,
+        .category-input label {
+            flex-shrink: 0;
+            width: 140px;
+            margin-right: 10px;
+        }
+
+        .file-input input[type="file"],
+        .category-input select {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .coordinate-input label {
+            display: inline-block;
+            width: 120px;
+            margin-right: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .coordinate-input select {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .file-upload-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .file-upload-form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .note {
+            color: #777;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .file-upload-form {
+                max-width: 300px;
+                padding: 15px;
+            }
+
+            .file-upload-form h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            .file-input,
+            .category-input {
+                flex-wrap: wrap;
+                margin-bottom: 10px;
+            }
+
+            .file-input label,
+            .category-input label {
+                flex-basis: 100%;
+                margin-bottom: 5px;
+            }
+
+            .file-input input[type="file"],
+            .category-input select {
+                width: 100%;
+            }
+
+            .note {
+                font-size: 12px;
+            }
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#category').change(function() {
+                if ($(this).val() === 'others') {
+                    $('#custom-name-field').show();
+                } else {
+                    $('#custom-name-field').hide();
+                }
+            });
+    
+            $('#file').change(function() {
+                var file = this.files[0];
+                if (file && file.name.endsWith('.csv')) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var contents = e.target.result;
+                        var lines = contents.split('\n');
+                        var columns = lines[0].split(',');
+    
+                        var columnOptions = '';
+    
+                        columnOptions += '<option value="">-- Select --</option>';
+    
+                        for (var i = 0; i < columns.length; i++) {
+                            columnOptions += '<option value="' + columns[i] + '">' + columns[i] + '</option>';
+                        }
+    
+                        $('#longitude').html(columnOptions);
+                        $('#latitude').html(columnOptions);
+                        $('#elevation').html(columnOptions);
+                    };
+                    reader.readAsText(file);
+                }
+            });
+        });
+    </script>
+    {% endblock %}
