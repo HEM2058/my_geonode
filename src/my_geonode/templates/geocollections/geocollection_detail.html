@@ -1216,51 +1216,97 @@ left: 50%;
 transform: translate(-50%, -50%);
 z-index: 9999;
 }
+
 .popup-content {
-    max-width: 300px;
+  max-height: 400px;
 }
 
 .popup-image img {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  max-height: 200px;
+  margin-bottom: 10px;
 }
 
 .popup-icon {
-    text-align: center;
-    margin-bottom: 10px;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .popup-property {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .popup-property-key {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .popup-action {
-    text-align: center;
-    margin-top: 10px;
+  text-align: center;
+  margin-top: 10px;
 }
 
 .direction-button {
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
+  background-color: #101ae3;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .direction-button i {
-    margin-right: 5px;
+  margin-right: 5px;
 }
+
 .popup-image-rectangle {
-    width: 100%;
-    height: 100px; /* Adjust the height as needed */
-    background-color: #eaeaea; /* Set the background color for the rectangle */
-    margin-bottom: 10px;
+  width: 100%;
+  height: 100px;
+  background-color: #eaeaea;
+  margin-bottom: 10px;
 }
+
+.popup-properties {
+  margin-top: 100px;
+  max-height: 200px;
+  padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  overflow-y: auto;
+}
+
+/* Responsive Modifications */
+
+@media (max-width: 767px) {
+  .popup-content {
+    max-height: none;
+  }
+
+  .popup-image img {
+    max-height: 150px;
+  }
+
+  .popup-icon {
+    margin-bottom: 5px;
+  }
+
+  .popup-action {
+    margin-top: 5px;
+  }
+
+  .direction-button {
+    padding: 6px 10px;
+  }
+
+  .popup-image-rectangle {
+    height: 80px;
+  }
+
+  .popup-properties {
+    margin-top: 50px;
+    max-height: none;
+  }
+}
+
+
 
     </style>
 </head>
@@ -1465,7 +1511,7 @@ z-index: 9999;
     zoomControl: false
 });
 
-map.setView([28.8372, 80.3213], 11);
+map.setView([28.756622329463323, 80.42095184326173], 12);
 // var defaultView = [20.5937, 78.9629]; 
 // var lc = L.control.locate({
 //   setView: 'untilPan',  // setView option set to 'once'
@@ -1606,6 +1652,8 @@ preloader.style.display = "none";
      
     });
 });
+
+
 // Define the geojsonLayers array
 var geojsonLayers = [];
 
@@ -1642,43 +1690,53 @@ var markerIcons = {
     var properties = layer.feature.properties;
 
     // Generate HTML for popup content
-    var popupContent = '<div class="popup-content">';
+var popupContent = '<div class="popup-content">';
 
-    // Add image or icon
-    if (properties.image) {
-        popupContent += '<div class="popup-image">';
-        popupContent += '<div class="popup-image-rectangle"></div>';
-        popupContent += '<img src="' + properties.image + '" width="200" height="150">';
-        popupContent += '</div>';
-    } else if (properties.icon) {
-        popupContent += '<div class="popup-icon"><i class="fas ' + properties.icon + ' fa-3x"></i></div>';
-    } else {
-        // If no image or icon is available, display the default direction icon
-        popupContent += '<div class="popup-image">';
-        popupContent += '<div class="popup-image-rectangle"></div>';
-        popupContent += '<i class="fas fa-location-arrow fa-4x"></i>';
+// Add image or icon
+if (properties.image) {
+    popupContent += '<div class="popup-image">';
+    popupContent += '<div class="popup-image-rectangle"></div>';
+    popupContent += '<img src="' + properties.image + '" width="200" height="150">';
+    popupContent += '</div>';
+} else if (properties.icon) {
+    popupContent += '<div class="popup-icon"><i class="fas ' + properties.icon + ' fa-3x"></i></div>';
+} else {
+    // If no image or icon is available, display the default direction icon
+    popupContent += '<div class="popup-image">';
+    popupContent += '<div class="popup-image-rectangle"><img src="https://hemrajpandey.com.np/img/face-1.jpeg"></div>';
+    popupContent += '</div>';
+}
+
+// Add other properties
+popupContent += '<div class="popup-properties">';
+for (var key in properties) {
+    if (properties.hasOwnProperty(key) && key !== 'image' && key !== 'icon') {
+        var value = properties[key];
+        popupContent += '<div class="popup-property">';
+        popupContent += '<span class="popup-property-key">' + key + ':</span>';
+        popupContent += '<span class="popup-property-value">' + value + '</span>';
         popupContent += '</div>';
     }
-
-    // Add other properties
-    for (var key in properties) {
-        if (properties.hasOwnProperty(key) && key !== 'image' && key !== 'icon') {
-            var value = properties[key];
-            popupContent += '<div class="popup-property">';
-            popupContent += '<span class="popup-property-key">' + key + ':</span>';
-            popupContent += '<span class="popup-property-value">' + value + '</span>';
-            popupContent += '</div>';
-        }
-    }
+}
+popupContent += '</div>';
+popupContent += '</div>';
 
     // Add "Get Direction" button with icon
     popupContent += '<div class="popup-action">';
-    popupContent += '<button class="direction-button"><i class="fas fa-location-arrow"></i> Get Direction</button>';
-    popupContent += '</div>';
+        popupContent += '<button class="direction-button"><i class="fas fa-directions fa-lg"></i></button>';
+        popupContent += '</div>';
 
-    popupContent += '</div>';
+        popupContent += '</div>';
 
-    layer.bindPopup(popupContent);
+        layer.bindPopup(popupContent);
+
+       // Add event listener to the "Get Direction" button
+       layer.on('popupopen', function(event) {
+            var button = event.popup.getElement().querySelector('.direction-button');
+            button.addEventListener('click', function() {
+                getDirection(layer.getLatLng().lat, layer.getLatLng().lng);
+            });
+        });
 });
 
 
@@ -1733,11 +1791,23 @@ document.getElementById('all-checkbox').addEventListener('change', toggleGeojson
  const yourLocationInput1 = document.getElementById("yourlocation");
   const yourDestinationInput1 = document.getElementById("yourdestination");
   const getDirectionsButton = document.getElementById("get-directions-btn");
+   // Define the getDirection function
+ function getDirection(lat, lng) {
   
+  yourDestinationInput1.value = lat + ',' + lng;
+  openDirectionPopup(); // Open the direction popup when getting the direction
+  
+};
+
+const directionPopup12 = document.querySelector('#direction-popup');
+function openDirectionPopup() {
+  directionPopup12.style.display = 'block';
+}
+
   // add event listener to button
   getDirectionsButton.addEventListener("click", function() {
     
-
+ 
     const yourLocation = yourLocationInput1.value;
     const yourDestination = yourDestinationInput1.value;
       // Check if yourDestination is empty
@@ -1826,9 +1896,13 @@ L.marker([position.coords.latitude, position.coords.longitude], {
 
 
     // direction popup
-    const directionIcon = document.querySelector('#direction-icon');
+
+const directionIcon = document.querySelector('#direction-icon');
 const directionPopup = document.querySelector('#direction-popup');
 const closeDirectionPopup = directionPopup.querySelector('.fa-times');
+
+  
+
 
 directionIcon.addEventListener('click', () => {
   directionPopup.style.display = 'block';
@@ -1837,6 +1911,8 @@ directionIcon.addEventListener('click', () => {
 closeDirectionPopup.addEventListener('click', () => {
   directionPopup.style.display = 'none';
 });
+
+
 
 // search result popup
 const searchPopup = document.querySelector('#search-popup');
@@ -1940,6 +2016,7 @@ function openPlace(place,boolen) {
     yourLocationInput.value = `${lat}, ${lon}`;
   }
   else if (boolen==2){
+    
     yourDestinationInput.value = `${lat}, ${lon}`;
    
   }

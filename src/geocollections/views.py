@@ -96,8 +96,16 @@ def convert_csv_to_geojson(request):
             },
         }
 
-        # Create or update a Geocollection object with the category
-        geocollection = Geocollection.objects.create(geojson_data=geojson_data, category=category)
+        # Check if a Geocollection object with the category already exists
+        geocollection = Geocollection.objects.filter(category=category).first()
+
+        if geocollection:
+            # Override the existing Geocollection with the new data and category
+            geocollection.geojson_data = geojson_data
+            geocollection.save()
+        else:
+            # Create a new Geocollection object with the category
+            geocollection = Geocollection.objects.create(geojson_data=geojson_data, category=category)
 
         # Return the success response
         response_data = {
