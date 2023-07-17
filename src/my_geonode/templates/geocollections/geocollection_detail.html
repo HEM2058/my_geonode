@@ -1695,9 +1695,10 @@ var popupContent = '<div class="popup-content">';
 if (properties.image_link) {
     popupContent += '<div class="popup-image">';
     popupContent += '<img src="' + properties.image_link + '" width="200" height="150">';
+    popupContent += '<a href="' + properties.image_link + '" target="_blank" class="full-screen-icon"><i class="fas fa-expand"></i></a>';
     popupContent += '</div>';
-    
-} 
+}
+
 // Add other properties
 popupContent += '<div class="popup-properties">';
 for (var key in properties) {
