@@ -15,7 +15,7 @@ from django.contrib.sites.shortcuts import get_current_site
 def GeoCollections(request):
     geocollection_objects = Geocollection.objects.all()
     geojson_data = []
-    print(geocollection_objects)
+  
     for geocollection in geocollection_objects:
         
         geojson_data.append(geocollection.geojson_data)
@@ -132,22 +132,32 @@ def convert_csv_to_geojson(request):
 
             # Extract the zip file
             geocollection.extract_zip_file()
-            
+
             # Construct image URLs based on the media folder, localhost URL, and category folder
             localhost_url = request.build_absolute_uri('/')[:-1]
-
             media_url = settings.MEDIA_URL
             category_folder = geocollection.category
 
             image_folder_path = geocollection.image_folder.path
-            for file_name in os.listdir(image_folder_path):
-                 file_path = os.path.join(image_folder_path, file_name)
-                 if os.path.isfile(file_path):
-                   relative_url = file_path.replace(image_folder_path, '').lstrip('/')
-                   image_url = f"{localhost_url}/geocollections{media_url}/{category_folder}/{relative_url}"
-                   print(f"Image URL: {image_url}")
 
-           
+            # Create a list to store the image URLs
+            image_urls = []
+
+            for file_name in os.listdir(image_folder_path):
+                file_path = os.path.join(image_folder_path, file_name)
+                if os.path.isfile(file_path):
+                    relative_url = file_path.replace(image_folder_path, '').lstrip('/')
+                    image_url = f"{localhost_url}/geocollections{media_url}/{category_folder}/{relative_url}"
+                    print(f"Image URL: {image_url}")
+                    # Add the image URL to the list
+                    image_urls.append(image_url)
+
+            # Assign the image URLs to the corresponding image_link in the GeoJSON features
+            for i, feature in enumerate(data):
+                if i < len(image_urls):
+                    feature['properties']['image_link'] = image_urls[i]
+                else:
+                    feature['properties']['image_link'] = ''
 
             # Override the existing Geocollection with the new data and category
             geocollection.geojson_data = geojson_data

@@ -1266,8 +1266,8 @@ z-index: 9999;
 }
 
 .popup-properties {
-  margin-top: 100px;
-  max-height: 200px;
+  margin-top: 20px;
+  max-height: 220px;
   padding: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   overflow-y: auto;
@@ -1301,7 +1301,7 @@ z-index: 9999;
   }
 
   .popup-properties {
-    margin-top: 50px;
+    margin-top: 15px;
     max-height: none;
   }
 }
@@ -1688,29 +1688,20 @@ var markerIcons = {
     // Add popup to each feature
     geojsonLayer.eachLayer(function(layer) {
     var properties = layer.feature.properties;
-
     // Generate HTML for popup content
 var popupContent = '<div class="popup-content">';
 
-// Add image or icon
-if (properties.image) {
+// Add image popup
+if (properties.image_link) {
     popupContent += '<div class="popup-image">';
-    popupContent += '<div class="popup-image-rectangle"></div>';
-    popupContent += '<img src="' + properties.image + '" width="200" height="150">';
+    popupContent += '<img src="' + properties.image_link + '" width="200" height="150">';
     popupContent += '</div>';
-} else if (properties.icon) {
-    popupContent += '<div class="popup-icon"><i class="fas ' + properties.icon + ' fa-3x"></i></div>';
-} else {
-    // If no image or icon is available, display the default direction icon
-    popupContent += '<div class="popup-image">';
-    popupContent += '<div class="popup-image-rectangle"><img src="https://hemrajpandey.com.np/img/face-1.jpeg"></div>';
-    popupContent += '</div>';
-}
-
+    
+} 
 // Add other properties
 popupContent += '<div class="popup-properties">';
 for (var key in properties) {
-    if (properties.hasOwnProperty(key) && key !== 'image' && key !== 'icon') {
+    if (properties.hasOwnProperty(key) && key !== 'image_link') {
         var value = properties[key];
         popupContent += '<div class="popup-property">';
         popupContent += '<span class="popup-property-key">' + key + ':</span>';
