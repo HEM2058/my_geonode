@@ -17,6 +17,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #########################################################################
+from django.conf.urls.static import static
 
 # Django settings for the GeoNode project.
 import os
@@ -68,7 +69,8 @@ ROOT_URLCONF = os.getenv('ROOT_URLCONF', '{}.urls'.format(PROJECT_NAME))
 # - Give priority to local geonode-project ones
 STATICFILES_DIRS = [os.path.join(LOCAL_ROOT, "static"), ] + STATICFILES_DIRS
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+MEDIA_URL  = 'media/'
+MEDIA_ROOT =  os.path.join(BASE_DIR,"media")
 # Location of locale files
 LOCALE_PATHS = (
     os.path.join(LOCAL_ROOT, 'locale'),

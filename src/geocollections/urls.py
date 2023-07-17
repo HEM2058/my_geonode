@@ -10,4 +10,4 @@ urlpatterns = [
      path('Upload_datasets/', DatasetsUpload, name='DatasetsUpload'),
      # URL pattern for converting CSV to GeoJSON
     path('convert-csv-to-geojson/', convert_csv_to_geojson, name='convert_csv_to_geojson'),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

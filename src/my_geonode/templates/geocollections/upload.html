@@ -19,6 +19,9 @@
 
                     <label for="elevation">Elevation (z):</label>
                     <select name="elevation" id="elevation"></select>
+                    
+                    <label for="image_link">Image_Link:</label>
+                    <select name="image_link" id="image_link"></select>
                 </div>
             </div>
             <div class="file-input">
@@ -216,6 +219,7 @@
                         $('#longitude').html(columnOptions);
                         $('#latitude').html(columnOptions);
                         $('#elevation').html(columnOptions);
+                        $('#image_link').html(columnOptions);
                     };
                     reader.readAsText(file);
                 }
