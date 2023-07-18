@@ -1494,6 +1494,9 @@ z-index: 9999;
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
 <!-- Leaflet.locatecontrol JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.71.0/dist/L.Control.Locate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+<!-- leaflet-browser print -->
+<script src="{% static '/Geocollections/leaflet.browser.print.min.js' %}"></script>
 <!-- Custom JS -->
 <script>
   const preloader = document.querySelector(".preloader-container");
@@ -1551,7 +1554,8 @@ zoomControlContainer.style.borderRadius = '50%'; // Apply border radius to creat
  
 scaleControl = L.control.scale({metric: true}).addTo(map);   
         
-
+// leaflet_browser_print
+L.control.browserPrint({position:'bottomleft'}).addTo(map);
 
 var basemaps = [
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1610,7 +1614,6 @@ CyclOSM = L.tileLayer(
             );
 
   
-
 
 preloader.style.display = "none";
 
