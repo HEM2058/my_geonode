@@ -68,41 +68,97 @@
             outline: none;
         }
         /* Style for menu bar */
-        .menu-bar {
-    position: fixed;
-    top: 190px;
-    left: -250px;
-    z-index: 998;
-    width: 200px;
-    height: 610px; /* Increased height to fit User Mode buttons */
-    border-radius:  2px 30px 4px 20px;
-    background-color: #f8f8f8;
-    transition: all 0.3s ease;
+/* Style for menu bar */
+.menu-bar {
+  position: fixed;
+  top: 190px;
+  left: -250px;
+  z-index: 998;
+  width: 200px;
+  height: 610px; /* Increased height to fit User Mode buttons */
+  border-radius: 2px 30px 4px 20px;
+  background-color: #f8f8f8;
+  transition: all 0.3s ease;
 }
+
 /* Style for menu bar - show */
 .menu-bar.show {
-    left: 10px;
-    top:190px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-
+  left: 10px;
+  top: 190px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
+
 /* Style for menu items */
 .menu-item {
-    padding: 10px 20px;
-    font-size: 18px;
-    color: #343a40;
-    text-decoration: none;
-    display: block;
-    transition: all 0.3s ease;
+  padding: 10px 20px;
+  font-size: 18px;
+  color: #343a40;
+  text-decoration: none;
+  display: block;
+  transition: all 0.3s ease;
 }
+
 /* Style for menu items - hover */
 .menu-item:hover {
-    background-color: #e9ecef;
+  background-color: #e9ecef;
 }
+
 /* Style for active menu item */
 .menu-item.active {
-    background-color:transparent;
-    color: #4016d7;
+  background-color: transparent;
+  color: #4016d7;
+}
+
+/* Style for search bar */
+.search-bar-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.search-bar-filter input[type="text"] {
+  flex: 1;
+  height: 30px;
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  padding-right: 40px; /* Increase padding for the icon */
+}
+
+/* Style for search icon */
+.search-bar-filter i {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.search-bar-filter input[type="text"]:focus + i,
+.search-bar-filter input[type="text"]:not(:placeholder-shown) + i {
+  opacity: 0;
+}
+/* Style for search bar filter input */
+#search {
+  width: 250px;
+  height: 50px;
+  padding: 10px 10px 10px 50px;
+  font-size: 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: #f8f9fa;
+  /* background-image: url('https://cdn-icons-png.flaticon.com/512/709/709690.png'); */
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+}
+
+
+/* Hide menu items */
+.menu-bar.hide-menu .menu-item {
+  display: none;
 }
 
 /* Style for User Mode buttons */
@@ -1337,6 +1393,11 @@ z-index: 9999;
 
  <!-- Menu bar -->
  <div class="menu-bar" id="menu-bar">
+   <!-- Search bar -->
+   <div class="search-bar-filter">
+    <input type="text" id="search" placeholder="Search">
+    <i class="fas fa-search" onclick="toggleMenuItems()"></i>
+  </div>
   <!-- Menu items -->
 
   <label class="menu-item active">
@@ -2078,7 +2139,7 @@ document.getElementById('menu-btn').addEventListener('click', function() {
         
     });
 
-
+ 
 
 
   </script>
