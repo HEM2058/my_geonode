@@ -86,13 +86,13 @@ top: 100px;
 left: -250px;
 z-index: 998;
 width: 245px;
-height: 610px; /* Increased height to fit User Mode buttons */
+height: 600px; /* Increased height to fit User Mode buttons */
 border-radius:  2px 30px 4px 20px;
 background-color: #f8f8f8;
 transition: all 0.3s ease;
 }
 .menu-item-container{
-  height: 580px; /* Increased height to fit User Mode buttons */
+  height: 570px; /* Increased height to fit User Mode buttons */
   transition: all 0.3s ease;
   /* Add overflow-y property to enable vertical scrolling */
   overflow-y: auto;
@@ -104,6 +104,7 @@ top:100px;
 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 
 }
+
 /* Style for menu items */
 .menu-item {
 padding: 10px 20px;
@@ -591,21 +592,27 @@ z-index: 9999;
 
 .popup-action {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 2px;
 }
 
-.direction-button {
-  background-color: #101ae3;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-}
+    .direction-button {
+        background-color: #101ae3;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-.direction-button i {
-  margin-right: 5px;
-}
+    .direction-button i {
+        margin-right: 5px;
+    }
+
+    .direction-button:hover {
+        background-color: #1e90ff; /* Change the background color on hover */
+    }
+
+
 
 .popup-image-rectangle {
   width: 100%;
@@ -615,13 +622,17 @@ z-index: 9999;
 }
 
 .popup-properties {
-  margin-top: 20px;
-  max-height: 220px;
-  padding: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  overflow-y: auto;
-}
+        margin-top: 10px;
+        max-height: 180px;
+        padding: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        overflow-y: auto;
+        border: 1px solid #ccc; /* Add the default border color here */
+    }
 
+    .popup-properties:hover {
+        border-color: #1e90ff; /* Change the border color on hover */
+    }
 /* Responsive Modifications */
 
 @media (max-width: 767px) {
@@ -638,7 +649,7 @@ z-index: 9999;
   }
 
   .popup-action {
-    margin-top: 5px;
+    margin-top: 2px;
   }
 
   .direction-button {
@@ -1097,7 +1108,7 @@ var markers = L.markerClusterGroup({
         var properties = layer.feature.properties;
         // Generate HTML for popup content
         var popupContent = '<div class="popup-content">';
-
+        
         // Add image popup
         if (properties.image_link) {
             popupContent += '<div class="popup-image">';
@@ -1105,7 +1116,10 @@ var markers = L.markerClusterGroup({
             popupContent += '<a href="' + properties.image_link + '" target="_blank" class="full-screen-icon"><i class="fas fa-expand"></i></a>';
             popupContent += '</div>';
         }
-
+          // Add "Get Direction" button with icon
+        popupContent += '<div class="popup-action">';
+        popupContent += '<button class="direction-button"><i class="fas fa-directions fa-lg"></i></button>';
+        
         // Add other properties
         popupContent += '<div class="popup-properties">';
         for (var key in properties) {
@@ -1117,9 +1131,11 @@ var markers = L.markerClusterGroup({
                 popupContent += '</div>';
             }
         }
-        popupContent += '</div>';
+       
+         
+        // popupContent += '</div>';
 
-        popupContent += '</div>';
+        // popupContent += '</div>';
 
         layer.bindPopup(popupContent);
 
