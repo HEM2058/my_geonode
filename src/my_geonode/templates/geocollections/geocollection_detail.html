@@ -78,17 +78,24 @@ html, body  {
     border: none;
     outline: none;
 }
+
 /* Style for menu bar */
 .menu-bar {
 position: fixed;
 top: 100px;
 left: -250px;
 z-index: 998;
-width: 238px;
+width: 245px;
 height: 610px; /* Increased height to fit User Mode buttons */
 border-radius:  2px 30px 4px 20px;
 background-color: #f8f8f8;
 transition: all 0.3s ease;
+}
+.menu-item-container{
+  height: 580px; /* Increased height to fit User Mode buttons */
+  transition: all 0.3s ease;
+  /* Add overflow-y property to enable vertical scrolling */
+  overflow-y: auto;
 }
 /* Style for menu bar - show */
 .menu-bar.show {
@@ -116,58 +123,11 @@ background-color:transparent;
 color: #4016d7;
 }
 
-/* Style for User Mode buttons */
-.user-mode {
-margin-top: 20px;
-text-align: center;
-}
-.user-mode p {
-font-size: 16px;
-font-weight: bold;
-}
-.user-mode button {
-margin: 10px;
-padding: 8px 20px;
-font-size: 16px;
-border: none;
-border-radius: 20px;
-background-color: #4016d7;
-color: #fff;
-cursor: pointer;
-}
-.user-mode button:hover {
-background-color: #1a0c51;
-}
-.user-mode button:focus {
-outline: none;
-}
 
-/* Style for filter button */
-.filter-btn {
-    background-color: black;
-    border: none;
-    outline: none;
-}
-/* Style for post plan button */
-.post-plan-btn {
-    background-color:transparent;
-    border: none;
-    outline: none;
-}
-/* Style for history button */
-.history-btn {
-    background-color: transparent;
-    border: none;
-    outline: none;
-}
-/* Style for payment button */
 
-/* Style for setting button */
-.setting-btn {
-    background-color: transparent;
-    border: none;
-    outline: none;
-}
+
+
+
 /* Style for menu button icon */
 .menu-btn i {
     font-size: 24px;
@@ -764,9 +724,10 @@ z-index: 9999;
     <i class="fas fa-search" onclick="toggleMenuItems()"></i>
   </div>
   <!-- Menu items -->
+ <div class="menu-item-container">
 
   <label class="menu-item active">
-    <input type="checkbox" id="all-checkbox" name="all" value="all" onchange="toggleGeojsonLayers()">
+    <input type="checkbox" id="all-checkbox" name="all" value="all" onchange="">
     <i class="fas fa-check-square"></i>
     <span>All</span>
 </label>
@@ -820,7 +781,7 @@ z-index: 9999;
     <i class="fas fa-question-circle"></i>
     <span>Others</span>
   </label>
-  
+</div>
 </div>
 
 
@@ -935,32 +896,12 @@ z-index: 9999;
         // Initialize map
         
        var map = L.map('map', {
-    // maxZoom: 20,
-    // minZoom: 6,
+   
     zoomControl: false
 });
 
 map.setView([28.756622329463323, 80.42095184326173], 12);
-// var defaultView = [20.5937, 78.9629]; 
-// var lc = L.control.locate({
-//   setView: 'untilPan',  // setView option set to 'once'
-//   locateOptions: {
-//     maximumAge: 10000,
-//     timeout: 10000,
-//     enableHighAccuracy: false
-//   },
-//   onLocationError: function(err) {
-//     alert(err.message);
-//     map.setView(defaultView, 4);
-//   },
-//   onLocationFound: function(e) {
-//     // Use the user's location to set the center and zoom level of the map
-//     map.setView(28.8372, 80.3213 ,5);
-//   }
-// }).addTo(map);
-// lc.getContainer().style.display = 'none';
-// // Manually start the plugin to check for the user's location
-// lc.start();
+
 
 var customZoomControl = L.control.zoom({
   position: 'bottomleft',
@@ -980,9 +921,9 @@ zoomControlContainer.style.borderRadius = '50%'; // Apply border radius to creat
  
 scaleControl = L.control.scale({metric: true}).addTo(map);   
         
-// leaflet_browser_print
-L.control.browserPrint({position:'bottomleft'}).addTo(map);
 
+// Create the browser print control and store it in a variable
+var browserPrintControl = L.control.browserPrint({ position: 'bottomleft' }).addTo(map);
 var basemaps = [
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -1523,6 +1464,19 @@ document.getElementById('menu-btn').addEventListener('click', function() {
     scaleControl._container.style.display = 'none';
   }
 });
+
+
+document.getElementById('menu-btn').addEventListener('click', function() {
+  console.log("clicked")
+ // Toggle print control visibility
+ if (browserPrintControl._container.style.display === 'none') {
+  browserPrintControl._container.style.display = 'block';
+  } else {
+    browserPrintControl._container.style.display = 'none';
+  }
+});
+
+
 
 
 document.getElementById('menu-btn').addEventListener('click', function() {
