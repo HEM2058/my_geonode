@@ -19,7 +19,6 @@ class Geocollection(models.Model):
         ('cooperatives', 'Cooperatives'),
         ('forest-offices', 'Forest Offices'),
         ('health-institutions', 'Health Institutions'),
-        ('heat-institutions', 'Heat Institutions'),
         ('municipal-offices', 'Municipal Offices'),
         ('religious-places', 'Religious Places'),
         ('schools', 'Schools'),

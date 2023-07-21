@@ -758,11 +758,6 @@ z-index: 9999;
     <span>Health Institutions</span>
   </label>
   <label class="menu-item">
-    <input type="checkbox" name="heat-institutions" id="heat-institutions-checkbox" value="heat-institutions" onchange="toggleHeatInstitutions()">
-    <i class="fas fa-fire"></i>
-    <span>Heat Institutions</span>
-  </label>
-  <label class="menu-item">
     <input type="checkbox" name="municipal-offices" id="municipal-offices-checkbox" value="municipal-offices" onchange="toggleMunicipalOffices()">
     <i class="fas fa-city"></i>
     <span>Municipal Offices</span>
@@ -1042,7 +1037,6 @@ var markerIcons = {
   'cooperatives': L.AwesomeMarkers.icon({icon: 'building', markerColor: 'blue', prefix: 'fa'}),
   'forest-offices': L.AwesomeMarkers.icon({icon: 'tree', markerColor: 'green', prefix: 'fa'}),
   'health-institutions': L.AwesomeMarkers.icon({icon: 'hospital', markerColor: 'red', prefix: 'fa'}),
-  'heat-institutions': L.AwesomeMarkers.icon({icon: 'fire', markerColor: 'orange', prefix: 'fa'}),
   'municipal-offices': L.AwesomeMarkers.icon({icon: 'city', markerColor: 'purple', prefix: 'fa'}),
   'religious-places': L.AwesomeMarkers.icon({icon: 'church', markerColor: 'yellow', prefix: 'fa'}),
   'schools': L.AwesomeMarkers.icon({icon: 'school', markerColor: 'darkblue', prefix: 'fa'}),
@@ -1361,40 +1355,7 @@ const queryInput1 = document.querySelector('.query-input1');
 const queryInput2 = document.querySelector('.query-input2');
 
 
-// Destination.addEventListener('keyup', (event) => {
-//   if (event.key === 'Enter') {
-//     search(Destination.value);
-//   }
-// });
-// searchInput.addEventListener('keyup', (event) => {
-//   if (event.key === 'Enter') {
-//     search(searchInput.value);
-//   }
-// });
 
-// searchIcon.addEventListener('click', () => {
-//   search(searchInput.value);
-// });
-
-// yourLocationIcon.addEventListener('click', () => {
-//   search(yourLocationInput.value,false);
-// });
-
-// yourLocationInput.addEventListener('keyup', (event) => {
-//   if (event.key === 'Enter') {
-//     search(yourLocationInput.value,false);
-//   }
-// });
-
-// yourDestinationIcon.addEventListener('click', () => {
-//   search(yourDestinationInput.value);
-// });
-
-// yourDestinationInput.addEventListener('keyup', (event) => {
-//   if (event.key === 'Enter') {
-//     search(yourDestinationInput.value);
-//   }
-// });
 
 queryInput.addEventListener('input', () => {
   search(queryInput.value);
@@ -1529,7 +1490,6 @@ document.getElementById('menu-btn').addEventListener('click', function() {
     });
 
  
-
 
   </script>
 
