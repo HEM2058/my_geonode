@@ -694,8 +694,40 @@ z-index: 9999;
     max-height: none;
   }
 }
+ /* Custom styles for the marker cluster */
+ .marker-cluster {
+        background-color: #1e90ff; /* Default color for the cluster circle */
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        transition: background-color 0.2s; /* Add a smooth transition effect on background-color change */
+    }
 
+    /* Gradient color effect */
+    .marker-cluster-small {
+        background-color: #00ff00; /* Green for small clusters */
+        background-image: radial-gradient(#00ff00, #007f00);
+    }
 
+    .marker-cluster-medium {
+        background-color: #ff8c00; /* Orange for medium clusters */
+        background-image: radial-gradient(#ff8c00, #ff5d00);
+    }
+
+    .marker-cluster-large {
+        background-color: #ff0000; /* Red for large clusters */
+        background-image: radial-gradient(#ff0000, #b30000);
+    }
+
+    /* Hover effect */
+    .marker-cluster:hover {
+        background-color: #ffcc00; /* Change the background color on hover */
+        border: 2px solid #ffffff; /* Add a white border on hover to make the circle stand out */
+    }
 
     </style>
 </head>
@@ -1050,7 +1082,6 @@ preloader.style.display = "none";
     });
 });
 
-
 // Define the geojsonLayers array
 var geojsonLayers = [];
 
@@ -1068,7 +1099,42 @@ var markerIcons = {
   'others': L.AwesomeMarkers.icon({icon: 'question-circle', markerColor: 'gray', prefix: 'fa'})
 };
 
-// Loop through the GeoJSON data and add each layer to the map
+// Create a marker cluster group with custom styles
+var markers = L.markerClusterGroup({
+    iconCreateFunction: function(cluster) {
+        var childCount = cluster.getChildCount();
+        var className = 'marker-cluster';
+
+        if (childCount < 10) {
+            className += ' marker-cluster-small';
+        } else if (childCount < 100) {
+            className += ' marker-cluster-medium';
+        } else {
+            className += ' marker-cluster-large';
+        }
+
+        // Change the color based on the number of markers in the cluster
+        var color;
+        if (childCount < 10) {
+            color = '#00ff00'; // Green
+        } else if (childCount < 100) {
+            color = '#ff8c00'; // Orange
+        } else {
+            color = '#ff0000'; // Red
+        }
+
+        return new L.DivIcon({
+            html: '<div><span>' + childCount + '</span></div>',
+            className: className,
+            iconSize: new L.Point(40, 40),
+            iconAnchor: [20, 20],
+            html: '<div style="background-color:' + color + ';" class="marker-cluster">' + childCount + '</div>'
+        });
+    }
+});
+
+
+// Loop through the GeoJSON data and add each layer to the marker cluster group
 {% for geojson in geocollection_objects %}
     var geojsonData = {{ geojson.geojson_data|safe }};
     var category = '{{ geojson.category }}';
@@ -1078,58 +1144,57 @@ var markerIcons = {
             return L.marker(latlng, { icon: markerIcons[category] });
         }
     });
-   
+
+    // Add the layer to the marker cluster group
+    markers.addLayer(geojsonLayer);
+
     // Add the layer to the array
     geojsonLayers.push(geojsonLayer);
 
     // Add popup to each feature
     geojsonLayer.eachLayer(function(layer) {
-    var properties = layer.feature.properties;
-    // Generate HTML for popup content
-var popupContent = '<div class="popup-content">';
+        var properties = layer.feature.properties;
+        // Generate HTML for popup content
+        var popupContent = '<div class="popup-content">';
 
-// Add image popup
-if (properties.image_link) {
-    popupContent += '<div class="popup-image">';
-    popupContent += '<img src="' + properties.image_link + '" width="200" height="150">';
-    popupContent += '<a href="' + properties.image_link + '" target="_blank" class="full-screen-icon"><i class="fas fa-expand"></i></a>';
-    popupContent += '</div>';
-}
+        // Add image popup
+        if (properties.image_link) {
+            popupContent += '<div class="popup-image">';
+            popupContent += '<img src="' + properties.image_link + '" width="200" height="150">';
+            popupContent += '<a href="' + properties.image_link + '" target="_blank" class="full-screen-icon"><i class="fas fa-expand"></i></a>';
+            popupContent += '</div>';
+        }
 
-// Add other properties
-popupContent += '<div class="popup-properties">';
-for (var key in properties) {
-    if (properties.hasOwnProperty(key) && key !== 'image_link') {
-        var value = properties[key];
-        popupContent += '<div class="popup-property">';
-        popupContent += '<span class="popup-property-key">' + key + ':</span>';
-        popupContent += '<span class="popup-property-value">' + value + '</span>';
-        popupContent += '</div>';
-    }
-}
-popupContent += '</div>';
-popupContent += '</div>';
-
-    // Add "Get Direction" button with icon
-    popupContent += '<div class="popup-action">';
-        popupContent += '<button class="direction-button"><i class="fas fa-directions fa-lg"></i></button>';
+        // Add other properties
+        popupContent += '<div class="popup-properties">';
+        for (var key in properties) {
+            if (properties.hasOwnProperty(key) && key !== 'image_link') {
+                var value = properties[key];
+                popupContent += '<div class="popup-property">';
+                popupContent += '<span class="popup-property-key">' + key + ':</span>';
+                popupContent += '<span class="popup-property-value">' + value + '</span>';
+                popupContent += '</div>';
+            }
+        }
         popupContent += '</div>';
 
         popupContent += '</div>';
 
         layer.bindPopup(popupContent);
 
-       // Add event listener to the "Get Direction" button
-       layer.on('popupopen', function(event) {
+        // Add event listener to the "Get Direction" button
+        layer.on('popupopen', function(event) {
             var button = event.popup.getElement().querySelector('.direction-button');
             button.addEventListener('click', function() {
                 getDirection(layer.getLatLng().lat, layer.getLatLng().lng);
             });
         });
-});
-
+    });
 
 {% endfor %}
+
+// Add the marker cluster group to the map
+map.addLayer(markers);
 
 // Function to toggle the visibility of all geojsonLayers
 function toggleGeojsonLayers() {
@@ -1138,9 +1203,9 @@ function toggleGeojsonLayers() {
     // Loop through the geojsonLayers array and toggle the visibility
     geojsonLayers.forEach(function(geojsonLayer) {
         if (isChecked) {
-            geojsonLayer.addTo(map);
+            markers.addLayer(geojsonLayer);
         } else {
-            geojsonLayer.removeFrom(map);
+            markers.removeLayer(geojsonLayer);
         }
     });
 }
@@ -1152,9 +1217,9 @@ function toggleLayerByCategory(category) {
             var isChecked = document.getElementById(category + '-checkbox').checked;
 
             if (isChecked) {
-                geojsonLayer.addTo(map);
+                markers.addLayer(geojsonLayer);
             } else {
-                geojsonLayer.removeFrom(map);
+                markers.removeLayer(geojsonLayer);
             }
         }
     });
@@ -1171,7 +1236,6 @@ document.getElementById('all-checkbox').addEventListener('change', toggleGeojson
         toggleLayerByCategory('{{ geojson.category }}');
     });
 {% endfor %}
-
 
 
  // get references to the input fields and button
