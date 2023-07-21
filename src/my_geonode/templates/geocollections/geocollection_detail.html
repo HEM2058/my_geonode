@@ -728,7 +728,7 @@ z-index: 9999;
 
   <label class="menu-item active">
     <input type="checkbox" id="all-checkbox" name="all" value="all" onchange="">
-    <i class="fas fa-check-square"></i>
+    <i class="fas fa-th-list"></i>
     <span>All</span>
 </label>
   <label class="menu-item">
@@ -1177,6 +1177,28 @@ document.getElementById('all-checkbox').addEventListener('change', toggleGeojson
         toggleLayerByCategory('{{ geojson.category }}');
     });
 {% endfor %}
+
+// Function to toggle the visibility of all geojsonLayers and all checkboxes
+function toggleGeojsonLayers() {
+    var isChecked = document.getElementById('all-checkbox').checked;
+
+    // Get all the input elements with type="checkbox" excluding the "All" checkbox
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:not(#all-checkbox)');
+
+    // Loop through the checkboxes and set their "checked" attribute to the same as the "All" checkbox
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = isChecked;
+    });
+
+    // Loop through the geojsonLayers array and toggle the visibility
+    geojsonLayers.forEach(function(geojsonLayer) {
+        if (isChecked) {
+            markers.addLayer(geojsonLayer);
+        } else {
+            markers.removeLayer(geojsonLayer);
+        }
+    });
+}
 
 
  // get references to the input fields and button
