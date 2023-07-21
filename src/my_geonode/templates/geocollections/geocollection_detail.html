@@ -57,27 +57,66 @@ html, body  {
 #map-container {
     padding: 0;
 }
+/* Style for home button */
 .home-btn {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  padding: 10px;
-  background-color: #f8f9fa;
-  border: none;
-  outline: none;
-}
-/* Style for menu button */
-.menu-btn {
     position: absolute;
-    top: 50px;
-    left: 0;
+    top: 4px;
+    left: 5px;
     z-index: 999;
     padding: 10px;
     background-color: #f8f9fa;
     border: none;
     outline: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Add shadow effect */
 }
+
+/* Style for menu button */
+.menu-btn {
+    position: absolute;
+    top: 54px;
+    left: 5px;
+    z-index: 999;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s ease;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+}
+
+
+/* Add a darker background color on hovering */
+.menu-btn:hover {
+    background-color: #e1e1e1;
+}
+
+/* Style for tooltip */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: #000;
+    color: #fff;
+    font-size: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}
+
 
 /* Style for menu bar */
 .menu-bar {
@@ -707,9 +746,9 @@ z-index: 9999;
   
 <div id="DisplayControl">
  <!-- Menu button -->
- <button class="home-btn" id="home-btn"><a style="text-decoration: none;" href="/"><i class="fas fa-home"></i></a></button>
+ <button class="home-btn" class="tooltip" title="Home" id="home-btn"><a style="text-decoration: none;" href="/"><i class="fas fa-home"></i></a></button>
 
- <button class="menu-btn" id="menu-btn"><i class="fas fa-filter"></i></button>
+ <button class="menu-btn"  class="tooltip" title="Filter" id="menu-btn"><i class="fas fa-filter"></i></button>
  <!-- Map container -->
  <!-- Preloader -->
  <!-- HTML code -->
@@ -730,10 +769,10 @@ z-index: 9999;
  <!-- Menu bar -->
  <div class="menu-bar" id="menu-bar">
    <!-- Search bar -->
-   <div class="search-bar-filter">
+   <!-- <div class="search-bar-filter">
     <input type="text" id="search-input1" placeholder="Search">
     <i class="fas fa-search" onclick="toggleMenuItems()"></i>
-  </div>
+  </div> -->
   <!-- Menu items -->
  <div class="menu-item-container">
 
@@ -757,6 +796,7 @@ z-index: 9999;
     <i class="fas fa-hospital"></i>
     <span>Health Institutions</span>
   </label>
+
   <label class="menu-item">
     <input type="checkbox" name="municipal-offices" id="municipal-offices-checkbox" value="municipal-offices" onchange="toggleMunicipalOffices()">
     <i class="fas fa-city"></i>
