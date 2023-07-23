@@ -11,7 +11,7 @@ from geonode.base.models import ResourceBase
 from geonode.groups.models import GroupProfile
 
 class SHPtoGeojson(models.Model):
-    geojson_data = models.JSONField()
+    shp_geojson_data = models.JSONField(null=True)
 
 def get_image_folder(instance, filename):
     return os.path.join(instance.category, filename)

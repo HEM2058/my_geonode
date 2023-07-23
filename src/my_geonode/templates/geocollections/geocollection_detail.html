@@ -1035,7 +1035,14 @@ CyclOSM = L.tileLayer(
   
 
 preloader.style.display = "none";
-
+ // Loop through each GeoJSON object and add it to the map as a layer
+ var geojson_data = {{ shp_geojson_data|safe }};
+            for (var key in geojson_data) {
+                if (geojson_data.hasOwnProperty(key)) {
+                    L.geoJSON(geojson_data[key]).addTo(map);
+                }
+            }
+        
 // #Navigate to your location
 const location = document.querySelector('.crosshair-icon')
 location.addEventListener("click", function(){

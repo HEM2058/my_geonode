@@ -15,18 +15,27 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import ShapefileUploadSerializer, ConvertedDataSerializer
 from .models import *
-
+import zipfile
+import tempfile
+import shapefile
 
 def GeoCollections(request):
     geocollection_objects = Geocollection.objects.all()
     geojson_data = []
-  
+    shp_geojson_data = {}
+    all_data = SHPtoGeojson.objects.all()
     for geocollection in geocollection_objects:
-        
-        geojson_data.append(geocollection.geojson_data)
+         geojson_data.append(geocollection.geojson_data)
 
-    return render(request, 'geocollections/geocollection_detail.html', {'geojson_data': geojson_data,'geocollection_objects':geocollection_objects})
+    for data in all_data:
+        shp_geojson_data[data.id] = data.shp_geojson_data
 
+    return render(request, 'geocollections/geocollection_detail.html', {'geojson_data': geojson_data,'geocollection_objects':geocollection_objects,'shp_geojson_data': shp_geojson_data})
+
+
+
+    
+ 
 
 def DatasetsUpload(request):
     if request.user.is_superuser:
@@ -199,6 +208,7 @@ def convert_csv_to_geojson(request):
 
 class convert_shp_to_geojson(APIView):
     def post(self, request):
+        print("Inside function")
         serializer = ShapefileUploadSerializer(data=request.data)
         if serializer.is_valid():
             zip_file = serializer.validated_data['zip_file']
@@ -241,10 +251,11 @@ class convert_shp_to_geojson(APIView):
                     }
 
                     # Save the converted GeoJSON to the database
-                    converted_data = ConvertedData.objects.create(geojson_data=geojson_data)
+                    converted_data = SHPtoGeojson.objects.create(shp_geojson_data=geojson_data)
 
                     converted_serializer = ConvertedDataSerializer(converted_data)
                     return Response(converted_serializer.data, status=status.HTTP_201_CREATED)
+                 
                 else:
                     return Response({'error': 'Shapefile not found in the uploaded ZIP file.'}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -6,4 +6,4 @@ class ShapefileUploadSerializer(serializers.Serializer):
 class ConvertedDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = SHPtoGeojson
-        fields = ('geojson_data',)
+        fields = ('shp_geojson_data',)
