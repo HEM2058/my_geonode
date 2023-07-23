@@ -142,16 +142,20 @@ def convert_csv_to_geojson(request):
 
             # Create a list to store the image URLs
             image_urls = []
-
+    
             for file_name in os.listdir(image_folder_path):
                 file_path = os.path.join(image_folder_path, file_name)
                 if os.path.isfile(file_path):
                     relative_url = file_path.replace(image_folder_path, '').lstrip('/')
                     image_url = f"{localhost_url}/geocollections{media_url}/{category_folder}/{relative_url}"
-                    print(f"Image URL: {image_url}")
                     # Add the image URL to the list
                     image_urls.append(image_url)
-
+                    # Sort the list of image URLs in alphabetical order
+            image_urls.sort()
+            # Now the image_urls list is sorted in alphabetical order
+            print("Sorted image URLs:")
+            for url in image_urls:
+                   print(url)
             # Assign the image URLs to the corresponding image_link in the GeoJSON features
             for i, feature in enumerate(data):
                 if i < len(image_urls):
