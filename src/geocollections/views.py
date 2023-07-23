@@ -9,8 +9,13 @@ import zipfile
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Geocollection
 from django.contrib.sites.shortcuts import get_current_site
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import ShapefileUploadSerializer, ConvertedDataSerializer
+from .models import *
+
 
 def GeoCollections(request):
     geocollection_objects = Geocollection.objects.all()
@@ -29,7 +34,11 @@ def DatasetsUpload(request):
     else:
         return HttpResponse('You are not authorized to access this page.')
     
-
+def ShpUpload(request):
+    if request.user.is_superuser:
+        return render(request, 'geocollections/uploadshp.html')
+    else:
+        return HttpResponse('You are not authorized to access this page.')
 
 @csrf_exempt
 def convert_csv_to_geojson(request):
@@ -185,3 +194,62 @@ def convert_csv_to_geojson(request):
         return JsonResponse(response_data)
 
     return JsonResponse({'error': 'Invalid request.'})
+
+
+
+class convert_shp_to_geojson(APIView):
+    def post(self, request):
+        serializer = ShapefileUploadSerializer(data=request.data)
+        if serializer.is_valid():
+            zip_file = serializer.validated_data['zip_file']
+
+            # Create a temporary directory to extract the contents of the zip file
+            temp_dir = tempfile.TemporaryDirectory()
+
+            try:
+                # Extract the contents of the zip file to the temporary directory
+                with zipfile.ZipFile(zip_file, 'r') as z:
+                    z.extractall(temp_dir.name)
+
+                # Find the .shp file in the extracted contents
+                shapefile_path = None
+                for root, dirs, files in os.walk(temp_dir.name):
+                    for file in files:
+                        if file.endswith(".shp"):
+                            shapefile_path = os.path.join(root, file)
+                            break
+                    if shapefile_path:
+                        break
+
+                if shapefile_path:
+                    # Read Shapefile and convert to GeoJSON
+                    shape_reader = shapefile.Reader(shapefile_path)
+                    fields = shape_reader.fields[1:]
+                    field_names = [field[0] for field in fields]
+                    features = []
+                    for shape_record in shape_reader.shapeRecords():
+                        geometry = shape_record.shape.__geo_interface__
+                        attributes = dict(zip(field_names, shape_record.record))
+                        features.append({
+                            'type': 'Feature',
+                            'geometry': geometry,
+                            'properties': attributes
+                        })
+                    geojson_data = {
+                        'type': 'FeatureCollection',
+                        'features': features
+                    }
+
+                    # Save the converted GeoJSON to the database
+                    converted_data = ConvertedData.objects.create(geojson_data=geojson_data)
+
+                    converted_serializer = ConvertedDataSerializer(converted_data)
+                    return Response(converted_serializer.data, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'error': 'Shapefile not found in the uploaded ZIP file.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            finally:
+                # Clean up extracted files and temporary directory
+                temp_dir.cleanup()
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

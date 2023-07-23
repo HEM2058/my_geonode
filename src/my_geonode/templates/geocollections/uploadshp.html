@@ -1,0 +1,98 @@
+{% extends "page.html" %}
+
+{% block container %}
+    <div class="file-upload-form">
+        <h1>Shp file Upload</h1>
+        <form action="{% url 'convert_shapefile' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="file-input">
+                <label for="file">Add SHP file (ZIM):</label>
+                <input type="file" name="file" id="file" accept=".shp,.zip">
+            </div>
+
+            <div id="custom-name-field">
+                <br>
+                <label for="custom-name">Name:</label>
+                <input type="text" name="custom-name" id="custom-name" placeholder="road-network">
+            </div>
+
+            <br><br>
+
+            <input type="submit" value="Upload">
+        </form>
+    </div>
+
+    <style>
+        .file-upload-form {
+            max-width: 400px;
+            margin: 15px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); /* Adding shadow effect */
+            text-align: center; /* Aligning the div at the center */
+        }
+
+        .file-upload-form h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .file-input label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555; /* Unique design for the label */
+        }
+
+        .file-input input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none; /* Remove default outline */
+        }
+
+        #custom-name-field label {
+            display: inline-block;
+            width: 60px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555; /* Unique design for the label */
+            margin-bottom: 5px;
+        }
+
+        #custom-name {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none; /* Remove default outline */
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s; /* Adding transition effect on hover */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Your JavaScript code here
+        });
+    </script>
+{% endblock %}

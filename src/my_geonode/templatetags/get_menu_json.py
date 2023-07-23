@@ -78,6 +78,11 @@ def get_base_left_topbar_menu(context):
                  "href": "/geocollections/Upload_datasets/",
                 "label": "Upload datasets"
             } if user.is_superuser else None,
+               {
+                "type": "link",
+                 "href": "/geocollections/Upload_shp_files/",
+                "label": "Upload SHP file"
+            } if user.is_superuser else None,
             ]
         },
        
