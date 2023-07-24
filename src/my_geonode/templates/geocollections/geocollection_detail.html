@@ -775,12 +775,12 @@ z-index: 9999;
  <!-- Menu bar -->
  <div class="menu-bar" id="menu-bar">
    <!-- Search bar -->
-   <!-- <div class="search-bar-filter">
-    <input type="text" id="search-input1" placeholder="Search">
+   <div class="search-bar-filter">
+    <input type="text" id="search-input1" placeholder="Search" oninput="handleSearchInput()">
     <i class="fas fa-search" onclick="toggleMenuItems()"></i>
-  </div> -->
+  </div>
   <!-- Menu items -->
- <div class="menu-item-container">
+ <div class="menu-item-container" id="menu-item-container">
 
   <label class="menu-item active">
     <input type="checkbox" id="all-checkbox" name="all" value="all" onchange="">
@@ -846,7 +846,7 @@ z-index: 9999;
    <!-- Search bar -->
 <div id="search-bar">
   <i id="direction-icon" class="fas fa-directions"></i>
-  <input type="text" id="search-input" class="query-input" placeholder="Search place">
+  <input type="text" id="search-input" class="query-input" placeholder="OSM Search">
   <i id="search-icon" class="fas fa-search"></i>
   <div id="line-separator"></div>
  </div>
@@ -1263,6 +1263,53 @@ function toggleGeojsonLayers() {
     });
 }
 
+// Add event listener to the search input field
+document.getElementById('search-input1').addEventListener('input', handleSearchInput);
+
+
+
+// Function to handle the search input and perform the search
+function handleSearchInput() {
+  const menuItemsContainer = document.querySelector(".menu-item-container");
+  const searchInput = document.getElementById("search-input1");
+
+  if (searchInput.value.trim() !== "") {
+    // If the search input has some content, hide the menu items
+    menuItemsContainer.style.display = "none";
+  } else {
+    // If the search input is empty, show the menu items
+    menuItemsContainer.style.display = "block";
+  }
+
+  var searchInputto = document.getElementById('search-input1').value.toLowerCase();
+
+  // Initialize an array to store the matching feature names
+  var matchingFeatureNames = [];
+
+  // Loop through the geojsonLayers array and filter the features based on the search input
+  geojsonLayers.forEach(function (geojsonLayer) {
+    geojsonLayer.eachLayer(function (layer) {
+      var properties = layer.feature.properties;
+      var featureName = properties.Name.toLowerCase();
+
+      // Check if the feature's name contains the search input
+      if (featureName && featureName.includes(searchInputto)) {
+        // Show the feature on the map
+        markers.addLayer(layer);
+        // Add the matching feature name to the array
+        matchingFeatureNames.push(featureName);
+      } else {
+        // Hide the feature from the map
+        markers.removeLayer(layer);
+         // Clear the existing menu items
+       
+      }
+    });
+  });
+
+  console.log("Matching features:", matchingFeatureNames);
+
+}
 
  // get references to the input fields and button
 
@@ -1542,7 +1589,9 @@ document.getElementById('menu-btn').addEventListener('click', function() {
         
     });
 
+
  
+
 
   </script>
 
