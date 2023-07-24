@@ -132,6 +132,10 @@ transition: all 0.3s ease;
 }
 .menu-item-container{
   height: 570px; /* Increased height to fit User Mode buttons */
+ 
+}
+#all{
+  height: 570px; /* Increased height to fit User Mode buttons */
   transition: all 0.3s ease;
   /* Add overflow-y property to enable vertical scrolling */
   overflow-y: auto;
@@ -780,60 +784,64 @@ z-index: 9999;
     <i class="fas fa-search" onclick="toggleMenuItems()"></i>
   </div>
   <!-- Menu items -->
- <div class="menu-item-container" id="menu-item-container">
 
-  <label class="menu-item active">
-    <input type="checkbox" id="all-checkbox" name="all" value="all" onchange="">
-    <i class="fas fa-th-list"></i>
-    <span>All</span>
-</label>
-  <label class="menu-item">
-     <input type="checkbox" name="cooperatives" id="cooperatives-checkbox" value="cooperatives">
-     <i class="fas fa-building"></i>
-     <span>Cooperatives</span>
-  </label>
-  <label class="menu-item">
-    <input type="checkbox" name="forest-offices" id="forest-offices-checkbox" value="forest-offices">
-    <i class="fas fa-tree"></i>
-    <span>Forest Offices</span>
-  </label>
-  <label class="menu-item">
-    <input type="checkbox" name="health-institutions" id="health-institutions-checkbox" value="health-institutions" onchange="toggleHealthInstitutions()">
-    <i class="fas fa-hospital"></i>
-    <span>Health Institutions</span>
-  </label>
+    <div class="menu-item-container" id="menu-item-container">
 
-  <label class="menu-item">
-    <input type="checkbox" name="municipal-offices" id="municipal-offices-checkbox" value="municipal-offices" onchange="toggleMunicipalOffices()">
-    <i class="fas fa-city"></i>
-    <span>Municipal Offices</span>
-  </label>
-  <label class="menu-item">
-    <input type="checkbox" name="religious-places" id="religious-places-checkbox" value="religious-places" onchange="toggleReligiousPlaces()">
-    <i class="fas fa-church"></i>
-    <span>Religious Places</span>
-  </label>
-  <label class="menu-item">
-    <input type="checkbox" name="schools" id="schools-checkbox" value="schools" onchange="toggleSchools()">
-    <i class="fas fa-school"></i>
-    <span>Schools</span>
-  </label>
-  <label class="menu-item">
-    <input type="checkbox" name="security-offices" id="security-offices-checkbox" value="security-offices" onchange="toggleSecurityOffices()">
-    <i class="fas fa-shield-alt"></i>
-    <span>Security Offices</span>
-  </label>
-  <label class="menu-item">
-    <input type="checkbox" name="tourism" id="tourism-checkbox" value="tourism" onchange="toggleTourism()">
-    <i class="fas fa-camera"></i>
-    <span>Tourism</span>
-  </label>
-  <label class="menu-item">
-    <input type="checkbox" name="others" id="others-checkbox" value="others" onchange="toggleOthers()">
-    <i class="fas fa-question-circle"></i>
-    <span>Others</span>
-  </label>
-</div>
+      <label class="menu-item active">
+        <input type="checkbox" id="all-checkbox" name="all" value="all" onchange="">
+        <i class="fas fa-th-list"></i>
+        <span>All</span>
+    </label>
+      <label class="menu-item">
+         <input type="checkbox" name="cooperatives" id="cooperatives-checkbox" value="cooperatives">
+         <i class="fas fa-building"></i>
+         <span>Cooperatives</span>
+      </label>
+      <label class="menu-item">
+        <input type="checkbox" name="forest-offices" id="forest-offices-checkbox" value="forest-offices">
+        <i class="fas fa-tree"></i>
+        <span>Forest Offices</span>
+      </label>
+      <label class="menu-item">
+        <input type="checkbox" name="health-institutions" id="health-institutions-checkbox" value="health-institutions" onchange="toggleHealthInstitutions()">
+        <i class="fas fa-hospital"></i>
+        <span>Health Institutions</span>
+      </label>
+    
+      <label class="menu-item">
+        <input type="checkbox" name="municipal-offices" id="municipal-offices-checkbox" value="municipal-offices" onchange="toggleMunicipalOffices()">
+        <i class="fas fa-city"></i>
+        <span>Municipal Offices</span>
+      </label>
+      <label class="menu-item">
+        <input type="checkbox" name="religious-places" id="religious-places-checkbox" value="religious-places" onchange="toggleReligiousPlaces()">
+        <i class="fas fa-church"></i>
+        <span>Religious Places</span>
+      </label>
+      <label class="menu-item">
+        <input type="checkbox" name="schools" id="schools-checkbox" value="schools" onchange="toggleSchools()">
+        <i class="fas fa-school"></i>
+        <span>Schools</span>
+      </label>
+      <label class="menu-item">
+        <input type="checkbox" name="security-offices" id="security-offices-checkbox" value="security-offices" onchange="toggleSecurityOffices()">
+        <i class="fas fa-shield-alt"></i>
+        <span>Security Offices</span>
+      </label>
+      <label class="menu-item">
+        <input type="checkbox" name="tourism" id="tourism-checkbox" value="tourism" onchange="toggleTourism()">
+        <i class="fas fa-camera"></i>
+        <span>Tourism</span>
+      </label>
+      <label class="menu-item">
+        <input type="checkbox" name="others" id="others-checkbox" value="others" onchange="toggleOthers()">
+        <i class="fas fa-question-circle"></i>
+        <span>Others</span>
+      </label>
+    </div>
+    <div id="all">
+  </div>
+ 
 </div>
 
 
@@ -1271,6 +1279,7 @@ document.getElementById('search-input1').addEventListener('input', handleSearchI
 // Function to handle the search input and perform the search
 function handleSearchInput() {
   const menuItemsContainer = document.querySelector(".menu-item-container");
+  const All = document.querySelector("#all");
   const searchInput = document.getElementById("search-input1");
 
   if (searchInput.value.trim() !== "") {
@@ -1296,8 +1305,43 @@ function handleSearchInput() {
       if (featureName && featureName.includes(searchInputto)) {
         // Show the feature on the map
         markers.addLayer(layer);
+        // Add the matching feature name to the menu-item-container
+const menuItem = document.createElement("label");
+menuItem.classList.add("menu-item");
+
+// Set padding-bottom to 0 for the menuItem
+menuItem.style.paddingBottom = "0";
+// Set cursor to pointer when hovering over the menuItem
+menuItem.style.cursor = "pointer";
+// Create a container to hold the icon and the text
+const menuItemContent = document.createElement("div");
+menuItemContent.classList.add("menu-item-content");
+
+// Create an icon element for the location icon
+const locationIcon = document.createElement("i");
+locationIcon.classList.add("fas", "fa-map-marker-alt");
+// Add spacing (margin) between the icon and the feature name
+locationIcon.style.marginRight = "8px"; // You can adjust the value as needed
+// Create a span element to display the feature name
+const menuItemText = document.createElement("span");
+menuItemText.textContent = featureName;
+
+// Append the icon and the text to the content container
+menuItemContent.appendChild(locationIcon);
+menuItemContent.appendChild(menuItemText);
+
+// Append the content container to the menu item
+menuItem.appendChild(menuItemContent);
+
+// Add more elements or attributes to the menuItem if needed
+// ...
+
+// Append the menu item to the menu-item-container
+All.appendChild(menuItem);
+
         // Add the matching feature name to the array
         matchingFeatureNames.push(featureName);
+        
       } else {
         // Hide the feature from the map
         markers.removeLayer(layer);
