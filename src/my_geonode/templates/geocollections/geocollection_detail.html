@@ -780,7 +780,7 @@ z-index: 9999;
  <div class="menu-bar" id="menu-bar">
    <!-- Search bar -->
    <div class="search-bar-filter">
-    <input type="text" id="search-input1" placeholder="Search" oninput="handleSearchInput()">
+    <input style="border-radius: 8px;" type="text" id="search-input1" placeholder="Search" oninput="handleSearchInput()">
     <i class="fas fa-search" onclick="toggleMenuItems()"></i>
   </div>
   <!-- Menu items -->
@@ -1288,6 +1288,8 @@ function handleSearchInput() {
   } else {
     // If the search input is empty, show the menu items
     menuItemsContainer.style.display = "block";
+   
+    
   }
 
   var searchInputto = document.getElementById('search-input1').value.toLowerCase();
