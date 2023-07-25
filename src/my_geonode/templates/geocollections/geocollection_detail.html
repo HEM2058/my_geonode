@@ -149,7 +149,7 @@ box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* Style for menu items */
-.menu-item {
+.menu-item  {
 padding: 10px 20px;
 font-size: 18px;
 color: #343a40;
@@ -168,6 +168,15 @@ color: #4016d7;
 }
 
 
+.menu-item1
+{
+padding: 10px 20px;
+font-size: 18px;
+color: #343a40;
+text-decoration: none;
+display: block;
+transition: all 0.3s ease;
+}
 
 
 
@@ -1304,17 +1313,17 @@ function handleSearchInput() {
       var featureName = properties.Name.toLowerCase();
 
       // Check if the feature's name contains the search input
-      if (featureName && featureName.includes(searchInputto)) {
+     if (featureName.includes(searchInputto)) {
         // Show the feature on the map
         markers.addLayer(layer);
         // Add the matching feature name to the menu-item-container
-const menuItem = document.createElement("label");
-menuItem.classList.add("menu-item");
+const menuItem1 = document.createElement("label");
+menuItem1.classList.add("menu-item1");
 
 // Set padding-bottom to 0 for the menuItem
-menuItem.style.paddingBottom = "0";
+menuItem1.style.paddingBottom = "0";
 // Set cursor to pointer when hovering over the menuItem
-menuItem.style.cursor = "pointer";
+menuItem1.style.cursor = "pointer";
 // Create a container to hold the icon and the text
 const menuItemContent = document.createElement("div");
 menuItemContent.classList.add("menu-item-content");
@@ -1333,13 +1342,13 @@ menuItemContent.appendChild(locationIcon);
 menuItemContent.appendChild(menuItemText);
 
 // Append the content container to the menu item
-menuItem.appendChild(menuItemContent);
+menuItem1.appendChild(menuItemContent);
 
 // Add more elements or attributes to the menuItem if needed
 // ...
 
 // Append the menu item to the menu-item-container
-All.appendChild(menuItem);
+All.appendChild(menuItem1);
 
         // Add the matching feature name to the array
         matchingFeatureNames.push(featureName);
@@ -1348,6 +1357,11 @@ All.appendChild(menuItem);
         // Hide the feature from the map
         markers.removeLayer(layer);
          // Clear the existing menu items
+           // Clear the existing menu items
+  const menuItems = document.querySelectorAll(".menu-item1");
+  menuItems.forEach(function (menuItem) {
+    menuItem.remove();
+  });
        
       }
     });
