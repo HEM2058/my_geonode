@@ -50,6 +50,7 @@ html, body  {
 #map{
     width: 100%;
     height: 100vh;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 
 
 }
@@ -177,7 +178,9 @@ text-decoration: none;
 display: block;
 transition: all 0.3s ease;
 }
-
+.menu-item1:hover {
+background-color: #e9ecef;
+}
 
 
 
@@ -789,7 +792,7 @@ z-index: 9999;
  <div class="menu-bar" id="menu-bar">
    <!-- Search bar -->
    <div class="search-bar-filter">
-    <input style="border-radius: 8px;" type="text" id="search-input1" placeholder="Search" oninput="handleSearchInput()">
+    <input style="border-radius: 8px;" type="text" id="search-input1" placeholder="Filter by Name" oninput="handleSearchInput()">
     <i class="fas fa-search" onclick="toggleMenuItems()"></i>
   </div>
   <!-- Menu items -->
@@ -863,7 +866,7 @@ z-index: 9999;
    <!-- Search bar -->
 <div id="search-bar">
   <i id="direction-icon" class="fas fa-directions"></i>
-  <input type="text" id="search-input" class="query-input" placeholder="OSM Search">
+  <input type="text" id="search-input" class="query-input" placeholder="Find address or places">
   <i id="search-icon" class="fas fa-search"></i>
   <div id="line-separator"></div>
  </div>
@@ -1285,7 +1288,7 @@ document.getElementById('search-input1').addEventListener('input', handleSearchI
 
 
 // Initialize a LatLngBounds object to encompass all the markers
-var markerBounds = new L.LatLngBounds();
+
 // Function to handle the search input and perform the search
 function handleSearchInput() {
   const menuItemsContainer = document.querySelector(".menu-item-container");
@@ -1353,15 +1356,28 @@ function handleSearchInput() {
 // Add more elements or attributes to the menuItem if needed
 // ...
 
-      // Add a click event listener to the menu item to zoom to the marker
-      menuItem1.addEventListener("click", function () {
+    // Add a click event listener to the menu item to zoom to the marker
+    menuItem1.addEventListener("click", function () {
           // Get the corresponding marker for this menu item
           const marker = getMarkerByFeatureName(featureName);
+         
           if (marker) {
-            // Extend the bounds to include the marker's position
-            markerBounds.extend(marker.getLatLng());
-            // Fit the map to the updated bounds
-            map.fitBounds(markerBounds);
+            
+            // Fly the map to the marker's position with the specified options
+            map.flyTo(marker.getLatLng(), 25, {
+              
+              duration: 2, // duration of the animation in seconds
+              easeLinearity: 0.25, // easing factor for the animation
+              animate: true, // whether to animate the map during flyTo
+              maxZoom: 18, // maximum zoom level of the animation
+              zoom: 15, // zoom level after the animation
+              pan: {
+                animate: true, // whether to animate the pan
+                duration: 2 // duration of the pan animation in seconds
+              }
+            });
+          
+          
           }
         });
 
