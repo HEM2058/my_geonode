@@ -14,4 +14,5 @@ urlpatterns = [
     # URL pattern for converting shp to GeoJSON
      path('convert-shp-to-geojson/', convert_shp_to_geojson, name='convert_shp_to_geojson'),
      path('convert-shapefile/', convert_shp_to_geojson.as_view(), name='convert_shapefile'),
+     
 ]

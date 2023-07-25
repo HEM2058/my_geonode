@@ -67,6 +67,8 @@ ROOT_URLCONF = os.getenv('ROOT_URLCONF', '{}.urls'.format(PROJECT_NAME))
 
 # Additional directories which hold static files
 # - Give priority to local geonode-project ones
+
+
 STATICFILES_DIRS = [os.path.join(LOCAL_ROOT, "static"), ] + STATICFILES_DIRS
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL  = 'media/'
@@ -153,3 +155,5 @@ LANGUAGES = (
 )
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'c9fc-103-181-226-184.ngrok-free.app']
+
+DEBUG = False

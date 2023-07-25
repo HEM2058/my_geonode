@@ -23,7 +23,13 @@ from geonode.urls import urlpatterns
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url
-from django.urls import path
+from django.urls import path,re_path
+from django.views.static import serve
+
 urlpatterns += [
     url(r'^geocollections/', include('geocollections.urls')),
+     # django debug false code 
+    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
  ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
