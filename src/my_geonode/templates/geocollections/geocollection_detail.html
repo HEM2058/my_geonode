@@ -1284,7 +1284,8 @@ function toggleGeojsonLayers() {
 document.getElementById('search-input1').addEventListener('input', handleSearchInput);
 
 
-
+// Initialize a LatLngBounds object to encompass all the markers
+var markerBounds = new L.LatLngBounds();
 // Function to handle the search input and perform the search
 function handleSearchInput() {
   const menuItemsContainer = document.querySelector(".menu-item-container");
@@ -1352,8 +1353,17 @@ function handleSearchInput() {
 // Add more elements or attributes to the menuItem if needed
 // ...
 
-        // Add the matching feature name to the array
-        matchingFeatureNames.push(featureName);
+      // Add a click event listener to the menu item to zoom to the marker
+      menuItem1.addEventListener("click", function () {
+          // Get the corresponding marker for this menu item
+          const marker = getMarkerByFeatureName(featureName);
+          if (marker) {
+            // Extend the bounds to include the marker's position
+            markerBounds.extend(marker.getLatLng());
+            // Fit the map to the updated bounds
+            map.fitBounds(markerBounds);
+          }
+        });
 
       } else {
         // Hide the feature from the map
@@ -1371,7 +1381,16 @@ function handleSearchInput() {
   console.log("Matching features:", matchingFeatureNames);
 
 }
-
+// Function to get the marker by feature name
+function getMarkerByFeatureName(name) {
+  let resultMarker = null;
+  markers.eachLayer(function (layer) {
+    if (layer.feature.properties.Name.toLowerCase() === name) {
+      resultMarker = layer;
+    }
+  });
+  return resultMarker;
+}
  // get references to the input fields and button
 
  const directionPopup1 = document.querySelector('#direction-popup');
