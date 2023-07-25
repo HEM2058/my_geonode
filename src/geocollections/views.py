@@ -59,14 +59,14 @@ def convert_csv_to_geojson(request):
 
         csv_data = csv.reader(csv_file.read().decode('utf-8').splitlines())
         header = [h.strip() for h in next(csv_data)]  # Remove leading/trailing whitespace characters
-
+        name_field = request.POST.get('name')
         longitude_field = request.POST.get('longitude')
         latitude_field = request.POST.get('latitude')
         elevation_field = request.POST.get('elevation')
-        image_link_field = request.POST.get('image_link').strip()  # Remove leading/trailing whitespace characters
-        print(image_link_field)
-        print(elevation_field)
-        if not longitude_field or not latitude_field or not elevation_field or not image_link_field:
+        # image_link_field = request.POST.get('image_link').strip()  # Remove leading/trailing whitespace characters
+       
+       
+        if not name_field or not longitude_field or not latitude_field or not elevation_field:
             return JsonResponse({'error': 'Invalid field selection. Please select the longitude, latitude, elevation, and image link fields.'})
 
         # Get the selected category
@@ -80,10 +80,11 @@ def convert_csv_to_geojson(request):
             row = [value.strip() for value in row]  # Remove leading/trailing whitespace characters
 
             try:
+                name_index = header.index(name_field)
                 longitude_index = header.index(longitude_field)
                 latitude_index = header.index(latitude_field)
                 elevation_index = header.index(elevation_field)
-                image_link_index = header.index(image_link_field)
+               
             except ValueError:
                 return JsonResponse({'error': 'Invalid field selection. Please select valid field names.'})
 
@@ -95,10 +96,11 @@ def convert_csv_to_geojson(request):
                 continue  # Skip the row if any of the required fields (longitude, latitude, elevation) are empty
 
             try:
+                name = row[name_index] if name_index<len(row) else ''    # Handle cases where name is missing
                 longitude = float(row[longitude_index])
                 latitude = float(row[latitude_index])
                 elevation = float(row[elevation_index])
-                image_link = row[image_link_index] if image_link_index < len(row) else ''  # Handle cases where image_link is missing
+                
             except ValueError:
                 return JsonResponse({'error': 'Invalid values found. Longitude, latitude, elevation, and image link fields must contain numeric values.'})
 
@@ -109,13 +111,14 @@ def convert_csv_to_geojson(request):
                     'coordinates': [longitude, latitude, elevation],
                 },
                 'properties': {
-                    'image_link': image_link,  # Add the image link property
+                    'image_link': "",  # Add the image link property
+                    'name': name,  # Add the name property
                 },
             }
 
             # Add additional properties from other columns in the CSV
             for index, value in enumerate(row):
-                if index not in [longitude_index, latitude_index, elevation_index, image_link_index]:
+                if index not in [name_index, longitude_index, latitude_index, elevation_index]:
                     column_name = header[index]
                     feature['properties'][column_name] = value
 
@@ -191,9 +194,6 @@ def convert_csv_to_geojson(request):
                 category=category,
                 zip_file=zip_file
             )
-
-            # Extract the zip file
-            geocollection.extract_zip_file()
 
         # Return the success response
         response_data = {

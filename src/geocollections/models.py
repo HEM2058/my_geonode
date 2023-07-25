@@ -33,7 +33,7 @@ class Geocollection(models.Model):
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, null=True)
     image_folder = models.FileField(upload_to=get_image_folder, blank=True, null=True)
     zip_file = models.FileField(upload_to='zip_files/', blank=True, null=True)
-    print("Uploaded Zip file")
+    
     def __str__(self):
         return self.category
 

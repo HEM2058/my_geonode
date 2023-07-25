@@ -11,6 +11,8 @@
                     <input type="file" name="file" id="file" accept=".csv">
                 </div>
                 <div class="coordinate-input">
+                    <label for="name">Name:</label>
+                    <select name="name" id="name"></select>
                     <label for="longitude">Longitude (x):</label>
                     <select name="longitude" id="longitude"></select>
 
@@ -20,8 +22,8 @@
                     <label for="elevation">Elevation (z):</label>
                     <select name="elevation" id="elevation"></select>
                     
-                    <label for="image_link">Image_Link:</label>
-                    <select name="image_link" id="image_link"></select>
+                    <!-- <label for="image_link">Image_Link:</label>
+                    <select name="image_link" id="image_link"></select> -->
                 </div>
             </div>
             <div class="file-input">
@@ -214,11 +216,11 @@
                         for (var i = 0; i < columns.length; i++) {
                             columnOptions += '<option value="' + columns[i] + '">' + columns[i] + '</option>';
                         }
-    
+                        $('#name').html(columnOptions);
                         $('#longitude').html(columnOptions);
                         $('#latitude').html(columnOptions);
                         $('#elevation').html(columnOptions);
-                        $('#image_link').html(columnOptions);
+                        // $('#image_link').html(columnOptions);
                     };
                     reader.readAsText(file);
                 }
