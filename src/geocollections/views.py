@@ -112,7 +112,7 @@ def convert_csv_to_geojson(request):
                 },
                 'properties': {
                     'image_link': "",  # Add the image link property
-                    'name': name,  # Add the name property
+                    'Name': name,  # Add the name property
                 },
             }
 
