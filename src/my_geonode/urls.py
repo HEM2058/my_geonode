@@ -20,7 +20,10 @@
 
 from django.conf.urls import include,url
 from geonode.urls import urlpatterns
-
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url
+from django.urls import path
 urlpatterns += [
     url(r'^geocollections/', include('geocollections.urls')),
- ]
+ ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

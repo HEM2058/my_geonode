@@ -137,17 +137,17 @@ def convert_csv_to_geojson(request):
 
         # Check if a Geocollection object with the category already exists
         geocollection = Geocollection.objects.filter(category=category).first()
-
+        print("Geocollection",geocollection)
         if geocollection:
             # Delete the existing zip file and extracted images
-            if geocollection.zip_file:
-                geocollection.zip_file.delete()
-
             if geocollection.image_folder:
+                print("image_folder", geocollection.image_folder, geocollection.image_folder.path)
+                if not os.path.exists(geocollection.image_folder.path):
+                    os.makedirs(geocollection.image_folder.path)
+
                 for file_name in os.listdir(geocollection.image_folder.path):
                     file_path = os.path.join(geocollection.image_folder.path, file_name)
                     os.remove(file_path)
-
             # Save the new zip file
             geocollection.zip_file.save(zip_file.name, zip_file)
 
@@ -168,7 +168,7 @@ def convert_csv_to_geojson(request):
                 file_path = os.path.join(image_folder_path, file_name)
                 if os.path.isfile(file_path):
                     relative_url = file_path.replace(image_folder_path, '').lstrip('/')
-                    image_url = f"{localhost_url}/geocollections{media_url}/{category_folder}/{relative_url}"
+                    image_url = f"{localhost_url}/{media_url}/{category_folder}/{relative_url}"
                     # Add the image URL to the list
                     image_urls.append(image_url)
                     # Sort the list of image URLs in alphabetical order
