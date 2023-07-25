@@ -134,7 +134,7 @@ transition: all 0.3s ease;
   height: 570px; /* Increased height to fit User Mode buttons */
  
 }
-#all{
+#matching-menu-items{
   height: 570px; /* Increased height to fit User Mode buttons */
   transition: all 0.3s ease;
   /* Add overflow-y property to enable vertical scrolling */
@@ -848,8 +848,8 @@ z-index: 9999;
         <span>Others</span>
       </label>
     </div>
-    <div id="all">
-  </div>
+  <!-- Container for matching menu items -->
+  <div id="matching-menu-items" class="matching-menu-items"></div>
  
 </div>
 
@@ -1288,9 +1288,10 @@ document.getElementById('search-input1').addEventListener('input', handleSearchI
 // Function to handle the search input and perform the search
 function handleSearchInput() {
   const menuItemsContainer = document.querySelector(".menu-item-container");
-  const All = document.querySelector("#all");
+  const matchingMenuItemsContainer = document.querySelector("#matching-menu-items");
   const searchInput = document.getElementById("search-input1");
-
+   // Clear the existing menu items from the matching-menu-items container
+  matchingMenuItemsContainer.innerHTML = "";
   if (searchInput.value.trim() !== "") {
     // If the search input has some content, hide the menu items
     menuItemsContainer.style.display = "none";
@@ -1316,53 +1317,53 @@ function handleSearchInput() {
      if (featureName.includes(searchInputto)) {
         // Show the feature on the map
         markers.addLayer(layer);
-        // Add the matching feature name to the menu-item-container
-const menuItem1 = document.createElement("label");
-menuItem1.classList.add("menu-item1");
+// Create a matching menu item
+       const menuItem1 = document.createElement("label");
+        menuItem1.classList.add("menu-item1");
+        // Set padding-bottom to 0 for the menuItem
+        menuItem1.style.paddingBottom = "0";
+        // Set cursor to pointer when hovering over the menuItem
+        menuItem1.style.cursor = "pointer";
 
-// Set padding-bottom to 0 for the menuItem
-menuItem1.style.paddingBottom = "0";
-// Set cursor to pointer when hovering over the menuItem
-menuItem1.style.cursor = "pointer";
-// Create a container to hold the icon and the text
-const menuItemContent = document.createElement("div");
-menuItemContent.classList.add("menu-item-content");
+        // Create a container to hold the icon and the text
+        const menuItemContent1 = document.createElement("div");
+        menuItemContent1.classList.add("matching-menu-items1");
 
-// Create an icon element for the location icon
-const locationIcon = document.createElement("i");
-locationIcon.classList.add("fas", "fa-map-marker-alt");
-// Add spacing (margin) between the icon and the feature name
-locationIcon.style.marginRight = "8px"; // You can adjust the value as needed
-// Create a span element to display the feature name
-const menuItemText = document.createElement("span");
-menuItemText.textContent = featureName;
+        // Create an icon element for the location icon
+        const locationIcon = document.createElement("i");
+        locationIcon.classList.add("fas", "fa-map-marker-alt");
+        // Add spacing (margin) between the icon and the feature name
+        locationIcon.style.marginRight = "8px"; // You can adjust the value as needed
 
-// Append the icon and the text to the content container
-menuItemContent.appendChild(locationIcon);
-menuItemContent.appendChild(menuItemText);
+        // Create a span element to display the feature name
+        const menuItemText = document.createElement("span");
+        menuItemText.textContent = featureName;
 
-// Append the content container to the menu item
-menuItem1.appendChild(menuItemContent);
+        // Append the icon and the text to the content container
+        menuItemContent1.appendChild(locationIcon);
+        menuItemContent1.appendChild(menuItemText);
+
+        // Append the content container to the menu item
+        menuItem1.appendChild(menuItemContent1);
+
+        // Append the menu item to the matching-menu-items container
+        matchingMenuItemsContainer.appendChild(menuItem1);
 
 // Add more elements or attributes to the menuItem if needed
 // ...
 
-// Append the menu item to the menu-item-container
-All.appendChild(menuItem1);
-
         // Add the matching feature name to the array
         matchingFeatureNames.push(featureName);
-        
+
       } else {
         // Hide the feature from the map
         markers.removeLayer(layer);
-         // Clear the existing menu items
-           // Clear the existing menu items
-  const menuItems = document.querySelectorAll(".menu-item1");
-  menuItems.forEach(function (menuItem) {
-    menuItem.remove();
-  });
        
+           // Clear the existing menu items
+
+       
+      
+    
       }
     });
   });
