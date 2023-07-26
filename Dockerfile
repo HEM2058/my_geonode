@@ -37,13 +37,14 @@ RUN apt-get install -y devscripts build-essential debhelper pkg-kde-tools sharut
 # Install pip packages
 RUN pip install pip --upgrade \
     && pip install pygdal==$(gdal-config --version).* \
-        flower==0.9.4
+    flower==0.9.4
 
 # Activate "memcached"
 RUN apt install -y memcached
 RUN pip install pylibmc \
     && pip install sherlock
-
+# Install pyshp package
+RUN pip install pyshp
 # add bower and grunt command
 COPY src /usr/src/my_geonode/
 WORKDIR /usr/src/my_geonode
