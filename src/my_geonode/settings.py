@@ -153,7 +153,12 @@ LANGUAGES = (
     ('en-us', 'English'),
     ('ne-ne', 'Nepali'),
 )
+MAPSTORE_TRANSLATIONS_PATH = [
+    '/static/mapstore/ms-translations',
+    '/static/mapstore/gn-translations',
+    '/static/mapstore/project-translations'
+]
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'c9fc-103-181-226-184.ngrok-free.app']
 
-DEBUG = False
+DEBUG = True
