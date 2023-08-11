@@ -85,6 +85,11 @@ def get_base_left_topbar_menu(context):
             } if user.is_superuser else None,
             ]
         },
+        {
+            "type": "link",
+            "href": "/geocollections/Land_Use_Planning/",
+            "label": "Land Use Planning"
+        },
        
     ]
 

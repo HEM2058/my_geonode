@@ -264,3 +264,8 @@ class convert_shp_to_geojson(APIView):
                 temp_dir.cleanup()
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#Resource Land Use Planning
+
+def LandUse(request):
+    return render(request,'geocollections/land.html')
